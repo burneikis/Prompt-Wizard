@@ -23,8 +23,8 @@ const SpellInput = ({ onSpellCast, isLoading, disabled }) => {
   };
 
   return (
-    <div className="spell-input">
-      <h3>🪄 Cast Your Spell</h3>
+    <div className={`spell-input ${isLoading ? 'casting' : ''}`}>
+      <h3>🪄 {isLoading ? 'Casting Spell...' : 'Cast Your Spell'}</h3>
       <form onSubmit={handleSubmit}>
         <div className="input-container">
           <textarea

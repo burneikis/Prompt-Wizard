@@ -36,7 +36,8 @@ const GameInterface = () => {
   const handleSpellCast = async (spellText) => {
     setIsLoading(true);
     setBattleResult(null);
-    setBattleAnimation('');
+    setBattleAnimation('creature-casting');
+    setSpellEffect('🔮');
 
     try {
       const response = await fetch('http://localhost:3001/api/spells/evaluate', {
@@ -270,6 +271,16 @@ const GameInterface = () => {
             <div className={`creature-emoji ${battleAnimation}`}>
               {currentCreature.image}
             </div>
+            {isLoading && battleAnimation === 'creature-casting' && (
+              <div className="casting-particles">
+                <div className="particle" style={{ left: '20%', animationDelay: '0s' }}></div>
+                <div className="particle" style={{ left: '40%', animationDelay: '0.3s' }}></div>
+                <div className="particle" style={{ left: '60%', animationDelay: '0.6s' }}></div>
+                <div className="particle" style={{ left: '80%', animationDelay: '0.9s' }}></div>
+                <div className="particle" style={{ left: '30%', animationDelay: '1.2s' }}></div>
+                <div className="particle" style={{ left: '70%', animationDelay: '1.5s' }}></div>
+              </div>
+            )}
             {spellEffect && (
               <div className="spell-cast-effect">
                 {spellEffect}
