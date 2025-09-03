@@ -659,6 +659,18 @@ body {
   margin-bottom: var(--spacing-2xl);
 }
 
+.victory-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .victory-actions {
+    flex-direction: column;
+  }
+}
+
 .victory-body p {
   color: var(--text-secondary);
   font-size: 1rem;
@@ -669,5 +681,270 @@ body {
 @media (min-width: 640px) {
   .victory-body p {
     font-size: 1.125rem;
+  }
+}
+
+/* Creature Selection Styles */
+.creature-selection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.header-section h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #10b981, #059669);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (max-width: 767px) {
+  .header-section {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+  
+  .header-section h1 {
+    font-size: 2rem;
+  }
+}
+
+.game-stats {
+  display: flex;
+  gap: var(--spacing-lg);
+  font-weight: 600;
+}
+
+.score, .defeated {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+}
+
+.creatures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
+}
+
+@media (max-width: 640px) {
+  .creatures-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+}
+
+.creature-card {
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.creature-card:hover:not(.defeated) {
+  border-color: var(--success-color);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px -8px rgb(0 0 0 / 0.15);
+}
+
+.creature-card.defeated {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--tertiary-bg);
+}
+
+.creature-image {
+  font-size: 4rem;
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.creature-card h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  font-weight: 600;
+  text-align: center;
+}
+
+.creature-card p {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.creature-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  font-size: 0.875rem;
+}
+
+.creature-stats div {
+  padding: var(--spacing-xs);
+  background: var(--primary-bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  font-weight: 500;
+}
+
+.defeated-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(16, 185, 129, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* Spell History Section */
+.spell-history-section {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin-top: var(--spacing-2xl);
+}
+
+.spell-history-section h3 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.spell-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.spell-record {
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-md);
+}
+
+.spell-text {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
+  font-style: italic;
+}
+
+.spell-details {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Game Header (for battle screen) */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.back-button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--tertiary-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-family);
+}
+
+.back-button:hover {
+  background: var(--border-color);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Update creature center styles */
+.creature-center {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-lg);
+}
+
+.creature-emoji {
+  font-size: 6rem;
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .creature-emoji {
+    font-size: 8rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .creature-emoji {
+    font-size: 10rem;
+  }
+}
+
+.creature-emoji:hover {
+  transform: scale(1.05);
+}
+
+/* Weakness info styling */
+.weakness-info {
+  text-align: center;
+  padding: var(--spacing-sm);
+  background: var(--tertiary-bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  font-size: 0.875rem;
+}
+
+.weakness-info strong {
+  color: var(--text-primary);
+}
+
+@media (max-width: 767px) {
+  .game-header {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    text-align: center;
   }
 }

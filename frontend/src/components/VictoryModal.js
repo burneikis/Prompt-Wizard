@@ -1,5 +1,5 @@
 
-const VictoryModal = ({ isOpen, onClose, onReset }) => {
+const VictoryModal = ({ isOpen, onClose, onReset, creatureName, onBackToSelection, earnedScore }) => {
   if (!isOpen) return null;
 
   return (
@@ -10,12 +10,18 @@ const VictoryModal = ({ isOpen, onClose, onReset }) => {
             <h2>🏆 Victory!</h2>
           </div>
           <div className="victory-body">
-            <p>You have defeated the Fire Dragon!</p>
+            <p>You have defeated the {creatureName}!</p>
             <p>Your magical prowess has proven victorious in battle!</p>
+            {earnedScore && <p><strong>You earned {earnedScore} points!</strong></p>}
           </div>
-          <button onClick={onReset} className="reset-button">
-            Face Another Dragon
-          </button>
+          <div className="victory-actions">
+            <button onClick={onReset} className="reset-button">
+              Fight Again
+            </button>
+            <button onClick={onBackToSelection} className="reset-button">
+              Choose Another Creature
+            </button>
+          </div>
         </div>
       </div>
     </div>

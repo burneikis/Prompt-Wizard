@@ -17,11 +17,11 @@
 ## Phase 2: Core Game Loop
 
 ### 2.1 Expand Encounter System
-- [ ] Add 2-3 more creatures with different weaknesses
-- [ ] Implement creature selection/progression
-- [ ] Basic win/lose conditions
-- [ ] Simple scoring system
-- [ ] Spell casting history log
+- [x] Add 2-3 more creatures with different weaknesses
+- [x] Implement creature selection/progression
+- [x] Basic win/lose conditions
+- [x] Simple scoring system
+- [x] Spell casting history log
 
 ## Phase 3: Polish & Safety
 
