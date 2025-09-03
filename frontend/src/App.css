@@ -317,3 +317,48 @@ body {
   position: absolute;
   left: 0;
 }
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.victory-modal {
+  padding: 30px;
+  text-align: center;
+}
+
+.victory-header h2 {
+  font-size: 2rem;
+  color: #4ade80;
+  margin-bottom: 20px;
+}
+
+.victory-body {
+  margin-bottom: 30px;
+}
+
+.victory-body p {
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}

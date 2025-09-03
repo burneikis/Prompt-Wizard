@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { creatures } from '../data/creatures';
 import SpellInput from './SpellInput';
 import BattleResult from './BattleResult';
+import VictoryModal from './VictoryModal';
 
 const GameInterface = () => {
   const [currentCreature, setCurrentCreature] = useState({
@@ -11,6 +12,7 @@ const GameInterface = () => {
   const [battleResult, setBattleResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [gameState, setGameState] = useState('ready'); // ready, battle, victory, defeat
+  const [showVictoryModal, setShowVictoryModal] = useState(false);
 
   const handleSpellCast = async (spellText) => {
     setIsLoading(true);
@@ -48,6 +50,7 @@ const GameInterface = () => {
       // Check win/lose conditions
       if (newHealth <= 0) {
         setGameState('victory');
+        setShowVictoryModal(true);
       } else if (damage === 0 && result.evaluation.effectiveness <= 3) {
         // If spell was very ineffective, creature might counter-attack
         setGameState('ready');
@@ -75,6 +78,11 @@ const GameInterface = () => {
     });
     setBattleResult(null);
     setGameState('ready');
+    setShowVictoryModal(false);
+  };
+
+  const closeVictoryModal = () => {
+    setShowVictoryModal(false);
   };
 
   return (
@@ -134,15 +142,11 @@ const GameInterface = () => {
           />
         </div>
 
-        {gameState === 'victory' && (
-          <div className="victory-section">
-            <h2>Victory!</h2>
-            <p>You have defeated the Fire Dragon!</p>
-            <button onClick={resetGame} className="reset-button">
-              Face Another Dragon
-            </button>
-          </div>
-        )}
+        <VictoryModal 
+          isOpen={showVictoryModal}
+          onClose={closeVictoryModal}
+          onReset={resetGame}
+        />
       </div>
     </div>
   );
