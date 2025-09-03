@@ -20,7 +20,7 @@ body {
 
 /* Game Interface */
 .game-interface {
-  max-width: 800px;
+  /* max-width: 800px; */
   margin: 0 auto;
 }
 
@@ -59,19 +59,16 @@ body {
 }
 
 .main-content {
-  display: grid;
-  grid-template-columns: 1fr 200px 1fr;
-  width: 100%;
-  align-items: center;
-}
-
-.left-spacer {
+  position: relative;
+  display: flex;
+  justify-content: center;
   width: 100%;
 }
 
 .feedback-section {
-  justify-self: start;
-  padding-left: 20px;
+  position: absolute;
+  z-index: 10;
+  right: 20px;
 }
 
 .dragon-center {
