@@ -108,11 +108,6 @@ const GameInterface = () => {
 
         {/* Main content row */}
         <div className="main-content">
-          {/* Spell tips on the left */}
-          <div className="tips-section">
-            <SpellTips />
-          </div>
-
           {/* Dragon in center */}
           <div className="dragon-center">
             <div className="dragon-emoji">
@@ -124,25 +119,27 @@ const GameInterface = () => {
               </div>
             )}
           </div>
+        </div>
 
-          {/* Feedback on the right */}
-          <div className="feedback-section">
-            {battleResult && (
+        {/* Spell input and tips/feedback section */}
+        <div className="spell-section-bottom">
+          <div className="spell-input-container">
+            <SpellInput 
+              onSpellCast={handleSpellCast}
+              isLoading={isLoading}
+              disabled={gameState === 'victory'}
+            />
+          </div>
+          <div className="spell-tips-container">
+            {battleResult ? (
               <BattleResult 
                 result={battleResult} 
                 gameState={gameState}
               />
+            ) : (
+              <SpellTips />
             )}
           </div>
-        </div>
-
-        {/* Spell input below dragon */}
-        <div className="spell-section-bottom">
-          <SpellInput 
-            onSpellCast={handleSpellCast}
-            isLoading={isLoading}
-            disabled={gameState === 'victory'}
-          />
         </div>
 
         <VictoryModal 
