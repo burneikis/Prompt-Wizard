@@ -22,10 +22,30 @@ router.post('/evaluate', async (req, res) => {
     console.log("Moderating spell:", spell);
     const moderation = await openaiService.moderateContent(spell);
     if (moderation.flagged) {
-      return res.status(400).json({
-        error: 'Inappropriate content detected',
-        flaggedCategories: moderation.categories
-      });
+      // Check for relevant flags, so that minor flags (like violence) don't block fantasy spells
+      relevant_categories = {
+        harassment: true,
+        'harassment/threatening': true,
+        sexual: true,
+        hate: true,
+        'hate/threatening': true,
+        illicit: false,
+        'illicit/violent': false,
+        'self-harm/intent': true,
+        'self-harm/instructions': true,
+        'self-harm': true,
+        'sexual/minors': true,
+        violence: false,
+        'violence/graphic': true
+      };
+
+      if (Object.keys(moderation.categories).some(cat => moderation.categories[cat] && relevant_categories[cat])) {
+        console.log(moderation.categories);
+        return res.status(400).json({
+          error: 'Inappropriate content detected',
+          flaggedCategories: moderation.categories
+        });
+      };
     }
     console.log("Spell passed moderation");
 
