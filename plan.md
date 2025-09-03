@@ -4,7 +4,7 @@
 
 ### 1.1 Project Setup
 - [ ] Create React app and Node.js backend
-- [ ] Set up OpenAI API integration (GPT-3.5/4)
+- [ ] Set up OpenAI API integration (gpt-5-nano)
 - [ ] Basic project structure and git repository
 
 ### 1.2 Single Encounter Prototype
@@ -70,8 +70,8 @@
 ## Tech Stack
 - **Frontend**: React
 - **Backend**: Node.js + Express
-- **AI**: OpenAI GPT-3.5 or GPT-4
-- **Deployment**: Vercel + Railway/Heroku
+- **AI**: OpenAI gpt-5-nano
+- **Deployment**: Vercel + Railway
 - **Database**: Start with JSON files, upgrade to MongoDB later if needed
 
 ## MVP Features for Prototype
