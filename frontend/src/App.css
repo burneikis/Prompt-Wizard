@@ -200,7 +200,7 @@ body {
   background: #f0f0f0;
   border: 1px solid #ccc;
   border-radius: 4px;
-  max-width: 300px;
+  width: 400px;
 }
 
 .result-header {
