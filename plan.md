@@ -31,8 +31,8 @@
 - [x] Basic progress tracking
 
 ### 3.2 Content Moderation
-- [ ] Implement simple safety checks
-- [ ] Error handling for API failures
+- [x] Implement simple safety checks
+- [x] Error handling for API failures
 
 ## Phase 3.5: Game improvement
 Develop the game, add stages, progression, map, different enemies, story?
