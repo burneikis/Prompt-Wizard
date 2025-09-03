@@ -3,9 +3,9 @@
 ## Phase 1: Setup & Basic Prototype
 
 ### 1.1 Project Setup
-- [ ] Create React app and Node.js backend
-- [ ] Set up OpenAI API integration (gpt-5-nano)
-- [ ] Basic project structure and git repository
+- [x] Create React app and Node.js backend
+- [x] Set up OpenAI API integration (gpt-5-nano)
+- [x] Basic project structure and git repository
 
 ### 1.2 Single Encounter Prototype
 - [ ] Create simple creature (e.g., Fire Dragon)
