@@ -147,7 +147,7 @@ const GameInterface = () => {
               <div 
                 key={creature.id}
                 className={`creature-card ${defeatedCreatures.includes(creature.id) ? 'defeated' : ''}`}
-                onClick={() => !defeatedCreatures.includes(creature.id) && selectCreature(creature.id)}
+                onClick={() => selectCreature(creature.id)}
               >
                 <div className="creature-image">{creature.image}</div>
                 <h3>{creature.name}</h3>

@@ -763,15 +763,13 @@ body {
   box-shadow: var(--shadow-md);
 }
 
-.creature-card:hover:not(.defeated) {
+.creature-card:hover {
   border-color: var(--success-color);
   transform: translateY(-4px);
   box-shadow: 0 12px 25px -8px rgb(0 0 0 / 0.15);
 }
 
 .creature-card.defeated {
-  opacity: 0.6;
-  cursor: not-allowed;
   background: var(--tertiary-bg);
 }
 
