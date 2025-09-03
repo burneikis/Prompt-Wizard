@@ -1,4 +1,3 @@
-import React from 'react';
 
 const VictoryModal = ({ isOpen, onClose, onReset }) => {
   if (!isOpen) return null;
