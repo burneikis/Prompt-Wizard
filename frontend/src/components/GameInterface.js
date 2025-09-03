@@ -3,6 +3,7 @@ import { creatures } from '../data/creatures';
 import SpellInput from './SpellInput';
 import BattleResult from './BattleResult';
 import VictoryModal from './VictoryModal';
+import SpellTips from './SpellTips';
 
 const GameInterface = () => {
   const [currentCreature, setCurrentCreature] = useState({
@@ -107,8 +108,10 @@ const GameInterface = () => {
 
         {/* Main content row */}
         <div className="main-content">
-          {/* Empty left space for balance */}
-          <div className="left-spacer"></div>
+          {/* Spell tips on the left */}
+          <div className="tips-section">
+            <SpellTips />
+          </div>
 
           {/* Dragon in center */}
           <div className="dragon-center">

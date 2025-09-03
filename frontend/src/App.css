@@ -141,6 +141,21 @@ body {
   }
 }
 
+.tips-section {
+  grid-column: 1;
+  justify-self: end;
+  width: 100%;
+  max-width: 320px;
+}
+
+@media (max-width: 1023px) {
+  .tips-section {
+    grid-column: unset;
+    justify-self: center;
+    order: 3;
+  }
+}
+
 .feedback-section {
   grid-column: 3;
   justify-self: start;
