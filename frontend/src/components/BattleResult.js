@@ -30,8 +30,8 @@ const BattleResult = ({ result, gameState }) => {
   return (
     <div className={`battle-result ${getResultClass()}`}>
       <div className="result-header">
-        <span className="result-icon">{getResultIcon()}</span>
-        <h3>{getResultText()}</h3>
+        <h3><span className="result-icon">{getResultIcon()} </span>
+        {getResultText()}</h3>
       </div>
       
       <div className="result-stats">

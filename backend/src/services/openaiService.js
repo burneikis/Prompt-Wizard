@@ -40,8 +40,8 @@ class OpenAIService {
 
             Respond with ONLY a valid JSON object (no additional text) containing:
             {
-              "effectiveness": number (1-10),
-              "damage": number (0-100),
+              "effectiveness": number (1-10) (overall effectiveness score),
+              "damage": number (0-100) (the damage done to the creature),
               "feedback": "Brief explanation of why it worked/didn't work",
               "success": boolean
             }
