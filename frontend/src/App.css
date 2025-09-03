@@ -9,11 +9,17 @@
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --danger-color: #ef4444;
+  --magic-primary: #8b5cf6;
+  --magic-secondary: #a855f7;
+  --magic-accent: #c084fc;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 20px rgb(139 92 246 / 0.3);
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   --spacing-xs: 0.5rem;
   --spacing-sm: 0.75rem;
@@ -705,10 +711,27 @@ body {
   color: var(--text-primary);
   font-weight: 700;
   margin: 0;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--magic-primary), var(--magic-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 2px 4px rgba(139, 92, 246, 0.1);
+  animation: shimmer 3s ease-in-out infinite alternate;
+}
+
+@keyframes shimmer {
+  0% {
+    background: linear-gradient(135deg, var(--magic-primary), var(--magic-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  100% {
+    background: linear-gradient(135deg, var(--magic-secondary), var(--magic-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 @media (max-width: 767px) {
@@ -865,6 +888,180 @@ body {
   color: var(--text-secondary);
 }
 
+/* Progress Tracker Styles */
+.progress-tracker {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl) 0;
+}
+
+.progress-tracker h3 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.overall-progress {
+  margin-bottom: var(--spacing-xl);
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background: var(--tertiary-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--magic-primary), var(--magic-secondary));
+  transition: width 0.5s ease;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.stat-card {
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--magic-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.achievements-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.achievements-section h4 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.achievements-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.achievement-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.achievement-badge:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--magic-primary);
+}
+
+.achievement-emoji {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.achievement-details {
+  flex: 1;
+}
+
+.achievement-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.achievement-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.next-milestone {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--magic-primary), var(--magic-secondary));
+  border-radius: var(--radius-md);
+  color: white;
+  text-align: left;
+}
+
+.milestone-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.milestone-text {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .achievement-badge {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .next-milestone {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-sm);
+  }
+}
+
 /* Game Header (for battle screen) */
 .game-header {
   display: flex;
@@ -906,7 +1103,8 @@ body {
 .creature-emoji {
   font-size: 5rem;
   user-select: none;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
 }
 
 @media (min-width: 640px) {
@@ -923,6 +1121,75 @@ body {
 
 .creature-emoji:hover {
   transform: scale(1.05);
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.2));
+}
+
+/* Battle Animation Classes */
+.creature-hit {
+  animation: hit-shake 0.6s ease-in-out;
+}
+
+.creature-critical-hit {
+  animation: critical-hit 0.8s ease-in-out;
+}
+
+.creature-defeated {
+  animation: defeat-fade 1s ease-in-out forwards;
+}
+
+.creature-idle {
+  animation: idle-float 3s ease-in-out infinite;
+}
+
+.spell-cast-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  pointer-events: none;
+  animation: spell-burst 1s ease-out forwards;
+  z-index: 10;
+}
+
+@keyframes hit-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px) scale(0.95); }
+  20%, 40%, 60%, 80% { transform: translateX(5px) scale(0.95); }
+}
+
+@keyframes critical-hit {
+  0% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+  25% { transform: scale(1.1) rotate(-2deg); filter: hue-rotate(180deg); }
+  50% { transform: scale(0.9) rotate(2deg); filter: hue-rotate(360deg); }
+  75% { transform: scale(1.05) rotate(-1deg); filter: hue-rotate(180deg); }
+  100% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+}
+
+@keyframes defeat-fade {
+  0% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(0.8) rotate(-10deg); opacity: 0.7; }
+  100% { transform: scale(0.6) rotate(-20deg); opacity: 0.3; filter: grayscale(1); }
+}
+
+@keyframes idle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes spell-burst {
+  0% { 
+    transform: translate(-50%, -50%) scale(0.5); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.2); 
+    opacity: 0.8; 
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(2); 
+    opacity: 0; 
+  }
 }
 
 /* Weakness info styling */

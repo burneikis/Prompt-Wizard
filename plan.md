@@ -26,9 +26,9 @@
 ## Phase 3: Polish & Safety
 
 ### 3.1 User Experience
-- [ ] Improve UI/UX
-- [ ] Add simple animations for battles
-- [ ] Basic progress tracking
+- [x] Improve UI/UX
+- [x] Add simple animations for battles
+- [x] Basic progress tracking
 
 ### 3.2 Content Moderation
 - [ ] Implement simple safety checks

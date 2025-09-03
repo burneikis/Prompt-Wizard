@@ -4,6 +4,7 @@ import SpellInput from './SpellInput';
 import BattleResult from './BattleResult';
 import VictoryModal from './VictoryModal';
 import SpellTips from './SpellTips';
+import ProgressTracker from './ProgressTracker';
 
 const GameInterface = () => {
   const [currentCreature, setCurrentCreature] = useState(null);
@@ -16,6 +17,8 @@ const GameInterface = () => {
   const [score, setScore] = useState(0);
   const [spellHistory, setSpellHistory] = useState([]);
   const [lastEarnedScore, setLastEarnedScore] = useState(0);
+  const [battleAnimation, setBattleAnimation] = useState('');
+  const [spellEffect, setSpellEffect] = useState('');
 
   const selectCreature = (creatureId) => {
     const creature = creatures[creatureId];
@@ -26,11 +29,14 @@ const GameInterface = () => {
     setSelectedCreatureId(creatureId);
     setGameState('ready');
     setBattleResult(null);
+    setBattleAnimation('creature-idle');
+    setSpellEffect('');
   };
 
   const handleSpellCast = async (spellText) => {
     setIsLoading(true);
     setBattleResult(null);
+    setBattleAnimation('');
 
     try {
       const response = await fetch('http://localhost:3001/api/spells/evaluate', {
@@ -52,6 +58,17 @@ const GameInterface = () => {
       const result = await response.json();
       setBattleResult(result);
 
+      // Add spell effect animation
+      const effectiveness = result.evaluation.effectiveness;
+      let effectEmoji = '✨';
+      if (effectiveness >= 8) effectEmoji = '⚡';
+      else if (effectiveness >= 6) effectEmoji = '🔥';
+      else if (effectiveness >= 4) effectEmoji = '💫';
+      else effectEmoji = '💨';
+      
+      setSpellEffect(effectEmoji);
+      setTimeout(() => setSpellEffect(''), 1000);
+
       // Add to spell history
       const spellRecord = {
         spell: spellText,
@@ -65,6 +82,24 @@ const GameInterface = () => {
       // Calculate new creature health
       const damage = result.evaluation.damage;
       const newHealth = Math.max(0, currentCreature.currentHealth - damage);
+      
+      // Animate creature based on damage
+      if (damage > 0) {
+        if (effectiveness >= 8 || damage >= currentCreature.maxHealth * 0.3) {
+          setBattleAnimation('creature-critical-hit');
+        } else {
+          setBattleAnimation('creature-hit');
+        }
+        setTimeout(() => {
+          if (newHealth <= 0) {
+            setBattleAnimation('creature-defeated');
+          } else {
+            setBattleAnimation('creature-idle');
+          }
+        }, 800);
+      } else {
+        setBattleAnimation('creature-idle');
+      }
       
       setCurrentCreature(prev => ({
         ...prev,
@@ -82,7 +117,7 @@ const GameInterface = () => {
         setLastEarnedScore(earnedScore);
         setDefeatedCreatures(prev => [...prev, currentCreature.id]);
         setGameState('victory');
-        setShowVictoryModal(true);
+        setTimeout(() => setShowVictoryModal(true), 1200);
       } else if (damage === 0 && result.evaluation.effectiveness <= 3) {
         // If spell was very ineffective, creature might counter-attack
         setGameState('ready');
@@ -98,6 +133,7 @@ const GameInterface = () => {
           success: false
         }
       });
+      setBattleAnimation('creature-idle');
     } finally {
       setIsLoading(false);
     }
@@ -163,6 +199,13 @@ const GameInterface = () => {
             ))}
           </div>
 
+          <ProgressTracker 
+            score={score}
+            defeatedCreatures={defeatedCreatures}
+            spellHistory={spellHistory}
+            totalCreatures={Object.keys(creatures).length}
+          />
+
           {spellHistory.length > 0 && (
             <div className="spell-history-section">
               <h3>Recent Spell History</h3>
@@ -224,9 +267,14 @@ const GameInterface = () => {
         <div className="main-content">
           {/* Creature in center */}
           <div className="creature-center">
-            <div className="creature-emoji">
+            <div className={`creature-emoji ${battleAnimation}`}>
               {currentCreature.image}
             </div>
+            {spellEffect && (
+              <div className="spell-cast-effect">
+                {spellEffect}
+              </div>
+            )}
             {gameState === 'victory' && (
               <div className="victory-overlay">
                 💀
