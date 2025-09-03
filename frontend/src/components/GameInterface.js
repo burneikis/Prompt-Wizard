@@ -53,7 +53,25 @@ const GameInterface = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to evaluate spell');
+        const errorData = await response.json();
+        
+        // Handle moderation failures specifically
+        if (errorData.type === 'content_moderation') {
+          setBattleResult({
+            evaluation: {
+              effectiveness: 0,
+              damage: 0,
+              feedback: errorData.message,
+              success: false
+            },
+            moderated: true
+          });
+          setBattleAnimation('creature-idle');
+          setIsLoading(false);
+          return;
+        }
+        
+        throw new Error(errorData.message || 'Failed to evaluate spell');
       }
 
       const result = await response.json();

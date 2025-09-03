@@ -3,6 +3,32 @@ import React from 'react';
 const BattleResult = ({ result, gameState }) => {
   const { evaluation } = result;
   
+  // Handle moderated spells
+  if (result.moderated) {
+    return (
+      <div className="battle-result result-moderated">
+        <div className="result-header">
+          <h3><span className="result-icon">🚫 </span>Spell Blocked</h3>
+        </div>
+        
+        <div className="result-feedback moderation-feedback">
+          <h4>⚠️ Content Warning:</h4>
+          <p>{evaluation.feedback}</p>
+        </div>
+        
+        <div className="improvement-tips">
+          <h4>✨ Spell Crafting Tips:</h4>
+          <ul>
+            <li>Use creative magical descriptions (ice storms, fireballs, etc.)</li>
+            <li>Focus on fantasy elements and magical abilities</li>
+            <li>Target the creature's specific weakness</li>
+            <li>Keep language appropriate for an educational game</li>
+          </ul>
+        </div>
+      </div>
+    );
+  }
+  
   const getResultIcon = () => {
     if (gameState === 'victory') return '🏆';
     if (evaluation.success && evaluation.damage > 70) return '💥'; // Critical hit

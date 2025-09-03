@@ -558,6 +558,36 @@ body {
   left: 0;
 }
 
+/* Moderated spell result styles */
+.result-moderated {
+  background: #fef7f7;
+  border-color: #fed7d7;
+  border-width: 2px;
+}
+
+.result-moderated .result-header h3 {
+  color: var(--danger-color);
+}
+
+.moderation-feedback {
+  background: #fef7f7;
+  border: 1px solid #fed7d7;
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.moderation-feedback h4 {
+  color: var(--danger-color);
+  margin-bottom: var(--spacing-sm);
+}
+
+.moderation-feedback p {
+  color: #991b1b;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
 .spell-tips {
   background: var(--secondary-bg);
   border: 1px solid var(--border-color);
