@@ -8,11 +8,11 @@
 - [x] Basic project structure and git repository
 
 ### 1.2 Single Encounter Prototype
-- [ ] Create simple creature (e.g., Fire Dragon)
-- [ ] Build basic prompt input interface
-- [ ] Implement OpenAI API call to evaluate prompt effectiveness
-- [ ] Display simple battle result (hit/miss/critical)
-- [ ] Add basic creature health/damage system
+- [x] Create simple creature (e.g., Fire Dragon)
+- [x] Build basic prompt input interface
+- [x] Implement OpenAI API call to evaluate prompt effectiveness
+- [x] Display simple battle result (hit/miss/critical)
+- [x] Add basic creature health/damage system
 
 ## Phase 2: Core Game Loop
 

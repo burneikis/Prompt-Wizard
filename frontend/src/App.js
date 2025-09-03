@@ -1,13 +1,11 @@
 import React from 'react';
 import './App.css';
+import GameInterface from './components/GameInterface';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Prompt Wizard</h1>
-        <p>Master the art of AI communication through magical encounters!</p>
-      </header>
+      <GameInterface />
     </div>
   );
 }

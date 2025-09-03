@@ -19,7 +19,7 @@ router.post('/evaluate', async (req, res) => {
       });
     }
 
-    // Check content moderation first
+    console.log("Moderating spell:", spell);
     const moderation = await openaiService.moderateContent(spell);
     if (moderation.flagged) {
       return res.status(400).json({
@@ -27,9 +27,12 @@ router.post('/evaluate', async (req, res) => {
         flaggedCategories: moderation.categories
       });
     }
+    console.log("Spell passed moderation");
 
     // Evaluate the spell
+    console.log("Evaluating spell:", spell);
     const evaluation = await openaiService.evaluateSpell(spell, creatureType, creatureWeakness);
+    console.log("Evaluation result:", evaluation);
 
     res.json({
       spell,
