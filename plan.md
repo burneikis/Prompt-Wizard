@@ -21,24 +21,21 @@
 - [ ] Implement creature selection/progression
 - [ ] Basic win/lose conditions
 - [ ] Simple scoring system
-
-### 2.2 Improve Prompt Evaluation
-- [ ] Refine OpenAI prompts for consistent spell evaluation
-- [ ] Add different spell types (fire, logic, creative)
-- [ ] Basic feedback on why prompts worked/failed
+- [ ] Spell casting history log
 
 ## Phase 3: Polish & Safety
 
 ### 3.1 User Experience
-- [ ] Improve UI/UX with basic styling
+- [ ] Improve UI/UX
 - [ ] Add simple animations for battles
-- [ ] Tutorial for first-time players
 - [ ] Basic progress tracking
 
 ### 3.2 Content Moderation
-- [ ] Add basic content filtering for inappropriate prompts
 - [ ] Implement simple safety checks
 - [ ] Error handling for API failures
+
+## Phase 3.5: Game improvement
+Develop the game, add stages, progression, map, different enemies, story?
 
 ## Phase 4: Deploy & Test
 
@@ -70,7 +67,7 @@
 ## Tech Stack
 - **Frontend**: React
 - **Backend**: Node.js + Express
-- **AI**: OpenAI gpt-5-nano
+- **AI**: OpenAI gpt-5-nano and omni-moderation
 - **Deployment**: Vercel + Railway
 - **Database**: Start with JSON files, upgrade to MongoDB later if needed
 
