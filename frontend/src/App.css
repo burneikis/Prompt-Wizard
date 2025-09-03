@@ -68,13 +68,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-2xl);
+  gap: var(--spacing-lg);
   min-height: 80vh;
 }
 
 @media (min-width: 768px) {
   .simple-layout {
-    gap: 2.5rem;
+    gap: var(--spacing-xl);
   }
 }
 
@@ -128,7 +128,7 @@ body {
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 300px;
+  min-height: 200px;
 }
 
 
@@ -194,7 +194,7 @@ body {
   width: 100%;
   max-width: 1200px;
   display: flex;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-lg);
   align-items: stretch;
 }
 
@@ -272,7 +272,7 @@ body {
 
 /* Spell Input */
 .spell-input {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   background: var(--secondary-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -284,7 +284,7 @@ body {
 
 .spell-input h3 {
   color: var(--text-primary);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   font-size: 1.125rem;
   font-weight: 600;
 }
@@ -296,7 +296,7 @@ body {
 }
 
 .input-container {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   flex: 1;
 }
 
@@ -309,7 +309,7 @@ body {
   color: var(--text-primary);
   font-size: 0.875rem;
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
   font-family: var(--font-family);
   line-height: 1.5;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -318,7 +318,7 @@ body {
 @media (min-width: 640px) {
   .spell-textarea {
     font-size: 1rem;
-    min-height: 120px;
+    min-height: 100px;
     padding: var(--spacing-md);
   }
 }
@@ -344,7 +344,7 @@ body {
 
 .cast-button {
   width: 100%;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm);
   background: var(--success-color);
   color: white;
   border: 2px solid var(--success-color);
@@ -359,7 +359,7 @@ body {
 
 @media (min-width: 640px) {
   .cast-button {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     font-size: 1.125rem;
   }
 }
@@ -906,20 +906,20 @@ body {
 }
 
 .creature-emoji {
-  font-size: 6rem;
+  font-size: 5rem;
   user-select: none;
   transition: transform 0.3s ease;
 }
 
 @media (min-width: 640px) {
   .creature-emoji {
-    font-size: 8rem;
+    font-size: 6rem;
   }
 }
 
 @media (min-width: 1024px) {
   .creature-emoji {
-    font-size: 10rem;
+    font-size: 7rem;
   }
 }
 

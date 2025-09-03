@@ -13,10 +13,10 @@ export const creatures = {
       'Clear instructions work better than vague ones'
     ]
   },
-  riddleSphinx: {
-    id: 'riddleSphinx',
-    name: 'Riddle Sphinx',
-    description: 'An ancient sphinx that guards secrets, vulnerable to logical reasoning and clever wordplay',
+  wiseLion: {
+    id: 'wiseLion',
+    name: 'Wise Lion',
+    description: 'An ancient lion that guards secrets, vulnerable to logical reasoning and clever wordplay',
     maxHealth: 120,
     weakness: 'logical reasoning and clever solutions',
     image: '🦁',
