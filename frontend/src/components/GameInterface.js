@@ -89,8 +89,11 @@ const GameInterface = () => {
   return (
     <div className="game-interface">
       <div className="simple-layout">
-        {/* Health bar above dragon */}
+        {/* Creature info and health bar */}
         <div className="health-section">
+          <div className="creature-name">
+            <h2>{currentCreature.name}</h2>
+          </div>
           <div className="health-bar">
             <div 
               className="health-fill"
@@ -103,6 +106,9 @@ const GameInterface = () => {
           </div>
           <div className="health-text">
             {currentCreature.currentHealth}/{currentCreature.maxHealth} HP
+          </div>
+          <div className="weakness-info">
+            <strong>Known Weakness:</strong> {currentCreature.weakness}
           </div>
         </div>
 
