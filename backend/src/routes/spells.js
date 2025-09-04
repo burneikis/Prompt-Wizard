@@ -5,7 +5,13 @@ const openaiService = require('../services/openaiService');
 // POST /api/spells/evaluate
 router.post('/evaluate', async (req, res) => {
   try {
-    const { spell, creatureType = 'Fire Dragon', creatureWeakness = 'ice and water magic' } = req.body;
+    const { 
+      spell, 
+      creatureType = 'Fire Dragon', 
+      creatureWeakness = 'ice and water magic',
+      isBoss = false,
+      bossPhase = null
+    } = req.body;
 
     if (!spell || spell.trim().length === 0) {
       return res.status(400).json({
@@ -74,13 +80,15 @@ router.post('/evaluate', async (req, res) => {
 
     // Evaluate the spell
     console.log("Evaluating spell:", spell);
-    const evaluation = await openaiService.evaluateSpell(spell, creatureType, creatureWeakness);
+    const evaluation = await openaiService.evaluateSpell(spell, creatureType, creatureWeakness, isBoss, bossPhase);
     console.log("Evaluation result:", evaluation);
 
     res.json({
       spell,
       creatureType,
-      evaluation
+      evaluation,
+      isBoss,
+      bossPhase
     });
 
   } catch (error) {

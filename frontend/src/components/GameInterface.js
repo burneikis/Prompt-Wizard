@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
-import { creatures } from '../data/creatures';
+import React, { useState, useEffect } from 'react';
+import { creatures, worlds, getAvailableStages, getAllCreaturesInOrder } from '../data/creatures';
 import SpellInput from './SpellInput';
 import BattleResult from './BattleResult';
 import VictoryModal from './VictoryModal';
 import SpellTips from './SpellTips';
-import ProgressTracker from './ProgressTracker';
+import WorldMap from './WorldMap';
+import StoryModal from './StoryModal';
 
 const GameInterface = () => {
   const [currentCreature, setCurrentCreature] = useState(null);
   const [selectedCreatureId, setSelectedCreatureId] = useState(null);
   const [battleResult, setBattleResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [gameState, setGameState] = useState('selection'); // selection, ready, battle, victory, defeat
+  const [gameState, setGameState] = useState('worldMap'); // worldMap, ready, battle, victory, defeat
   const [showVictoryModal, setShowVictoryModal] = useState(false);
   const [defeatedCreatures, setDefeatedCreatures] = useState([]);
+  const [completedStages, setCompletedStages] = useState([]);
   const [score, setScore] = useState(0);
   const [spellHistory, setSpellHistory] = useState([]);
   const [lastEarnedScore, setLastEarnedScore] = useState(0);
@@ -23,20 +25,113 @@ const GameInterface = () => {
   const [maxPlayerHealth] = useState(100);
   const [playerTakingDamage, setPlayerTakingDamage] = useState(false);
   const [showDefeatModal, setShowDefeatModal] = useState(false);
+  
+  // New story and progression state
+  const [showStoryModal, setShowStoryModal] = useState(false);
+  const [storyData, setStoryData] = useState({ world: null, stage: null, storyType: 'world' });
+  const [currentBossPhase, setCurrentBossPhase] = useState(1);
+  const [bossPhaseHealth, setBossPhaseHealth] = useState(100);
+
+  // Load game progress from localStorage on component mount
+  useEffect(() => {
+    const savedProgress = localStorage.getItem('promptWizardProgress');
+    if (savedProgress) {
+      try {
+        const progress = JSON.parse(savedProgress);
+        setDefeatedCreatures(progress.defeatedCreatures || []);
+        setCompletedStages(progress.completedStages || []);
+        setScore(progress.score || 0);
+        setSpellHistory(progress.spellHistory || []);
+      } catch (error) {
+        console.error('Failed to load saved progress:', error);
+      }
+    }
+  }, []);
+
+  // Save progress to localStorage whenever key state changes
+  useEffect(() => {
+    const progress = {
+      defeatedCreatures,
+      completedStages,
+      score,
+      spellHistory
+    };
+    localStorage.setItem('promptWizardProgress', JSON.stringify(progress));
+  }, [defeatedCreatures, completedStages, score, spellHistory]);
+
+  // Check for stage completion whenever creatures are defeated
+  useEffect(() => {
+    checkStageCompletion();
+  }, [defeatedCreatures]);
+
+  const checkStageCompletion = () => {
+    for (const world of Object.values(worlds)) {
+      for (const stage of world.stages) {
+        if (!completedStages.includes(stage.id)) {
+          const stageCreatures = stage.creatures;
+          const allDefeated = stageCreatures.every(creatureId => defeatedCreatures.includes(creatureId));
+          
+          if (allDefeated && stageCreatures.length > 0) {
+            setCompletedStages(prev => [...prev, stage.id]);
+            // Show stage completion story
+            setTimeout(() => {
+              setStoryData({ world, stage, storyType: 'victory' });
+              setShowStoryModal(true);
+            }, 1500);
+          }
+        }
+      }
+    }
+  };
 
   const selectCreature = (creatureId) => {
     const creature = creatures[creatureId];
-    setCurrentCreature({
-      ...creature,
-      currentHealth: creature.maxHealth
-    });
+    
+    // Handle boss mechanics
+    if (creature.isBoss) {
+      setCurrentBossPhase(1);
+      setBossPhaseHealth(creature.phases[0].phaseHealth);
+      setCurrentCreature({
+        ...creature,
+        currentHealth: creature.maxHealth,
+        currentPhase: 1,
+        currentWeakness: creature.phases[0].weakness
+      });
+    } else {
+      setCurrentCreature({
+        ...creature,
+        currentHealth: creature.maxHealth
+      });
+    }
+    
     setSelectedCreatureId(creatureId);
     setGameState('ready');
     setBattleResult(null);
     setBattleAnimation('creature-idle');
     setSpellEffect('');
-    setPlayerHealth(maxPlayerHealth); // Reset player health when selecting creature
+    setPlayerHealth(maxPlayerHealth);
     setPlayerTakingDamage(false);
+  };
+
+  const handleStoryShow = (world) => {
+    setStoryData({ world, stage: null, storyType: 'world' });
+    setShowStoryModal(true);
+  };
+
+  const handleStoryClose = () => {
+    setShowStoryModal(false);
+  };
+
+  const backToWorldMap = () => {
+    setCurrentCreature(null);
+    setSelectedCreatureId(null);
+    setBattleResult(null);
+    setGameState('worldMap');
+    setShowVictoryModal(false);
+    setShowDefeatModal(false);
+    setPlayerHealth(maxPlayerHealth);
+    setCurrentBossPhase(1);
+    setBossPhaseHealth(100);
   };
 
   const handleSpellCast = async (spellText) => {
@@ -54,7 +149,9 @@ const GameInterface = () => {
         body: JSON.stringify({
           spell: spellText,
           creatureType: currentCreature.name,
-          creatureWeakness: currentCreature.weakness
+          creatureWeakness: currentCreature.isBoss ? currentCreature.currentWeakness : currentCreature.weakness,
+          isBoss: currentCreature.isBoss || false,
+          bossPhase: currentCreature.isBoss ? currentBossPhase : null
         })
       });
 
@@ -104,9 +201,44 @@ const GameInterface = () => {
       };
       setSpellHistory(prev => [spellRecord, ...prev].slice(0, 10)); // Keep last 10 spells
 
-      // Calculate new creature health
+      // Calculate damage and handle boss phases
       const damage = result.evaluation.damage;
-      const newHealth = Math.max(0, currentCreature.currentHealth - damage);
+      let newHealth = currentCreature.currentHealth;
+      let phaseCompleted = false;
+
+      if (currentCreature.isBoss) {
+        // Boss phase-based damage calculation
+        const newPhaseHealth = Math.max(0, bossPhaseHealth - damage);
+        setBossPhaseHealth(newPhaseHealth);
+        
+        if (newPhaseHealth <= 0 && currentBossPhase < currentCreature.phases.length) {
+          // Phase completed, move to next phase
+          phaseCompleted = true;
+          const nextPhase = currentBossPhase + 1;
+          setCurrentBossPhase(nextPhase);
+          
+          if (nextPhase <= currentCreature.phases.length) {
+            const phaseData = currentCreature.phases[nextPhase - 1];
+            setBossPhaseHealth(phaseData.phaseHealth);
+            setCurrentCreature(prev => ({
+              ...prev,
+              currentPhase: nextPhase,
+              currentWeakness: phaseData.weakness,
+              currentHealth: prev.currentHealth - (currentCreature.phases[0].phaseHealth) // Reduce overall health
+            }));
+          }
+        }
+        
+        newHealth = currentCreature.maxHealth - ((currentBossPhase - 1) * currentCreature.phases[0].phaseHealth) - (currentCreature.phases[0].phaseHealth - bossPhaseHealth);
+        newHealth = Math.max(0, newHealth);
+      } else {
+        // Regular creature damage
+        newHealth = Math.max(0, currentCreature.currentHealth - damage);
+        setCurrentCreature(prev => ({
+          ...prev,
+          currentHealth: newHealth
+        }));
+      }
       
       // Animate creature based on damage
       if (damage > 0) {
@@ -118,6 +250,8 @@ const GameInterface = () => {
         setTimeout(() => {
           if (newHealth <= 0) {
             setBattleAnimation('creature-defeated');
+          } else if (phaseCompleted && currentCreature.isBoss) {
+            setBattleAnimation('boss-phase-transition');
           } else {
             setBattleAnimation('creature-idle');
           }
@@ -125,11 +259,6 @@ const GameInterface = () => {
       } else {
         setBattleAnimation('creature-idle');
       }
-      
-      setCurrentCreature(prev => ({
-        ...prev,
-        currentHealth: newHealth
-      }));
 
       // Reduce player health after each spell (creature counter-attacks)
       const playerDamage = Math.ceil(maxPlayerHealth / 3); // 1/3 of max health (34)
@@ -191,90 +320,51 @@ const GameInterface = () => {
   const resetGame = () => {
     if (selectedCreatureId) {
       const creature = creatures[selectedCreatureId];
-      setCurrentCreature({
-        ...creature,
-        currentHealth: creature.maxHealth
-      });
+      if (creature.isBoss) {
+        setCurrentBossPhase(1);
+        setBossPhaseHealth(creature.phases[0].phaseHealth);
+        setCurrentCreature({
+          ...creature,
+          currentHealth: creature.maxHealth,
+          currentPhase: 1,
+          currentWeakness: creature.phases[0].weakness
+        });
+      } else {
+        setCurrentCreature({
+          ...creature,
+          currentHealth: creature.maxHealth
+        });
+      }
     }
     setBattleResult(null);
     setGameState('ready');
     setShowVictoryModal(false);
     setShowDefeatModal(false);
-    setPlayerHealth(maxPlayerHealth); // Reset player health
-  };
-
-  const backToSelection = () => {
-    setCurrentCreature(null);
-    setSelectedCreatureId(null);
-    setBattleResult(null);
-    setGameState('selection');
-    setShowVictoryModal(false);
-    setShowDefeatModal(false);
-    setPlayerHealth(maxPlayerHealth); // Reset player health
+    setPlayerHealth(maxPlayerHealth);
   };
 
   const closeVictoryModal = () => {
     setShowVictoryModal(false);
   };
 
-  if (gameState === 'selection') {
+  if (gameState === 'worldMap') {
     return (
       <div className="game-interface">
-        <div className="creature-selection">
-          <div className="header-section">
-            <h1>Prompt Wizard</h1>
-            <div className="game-stats">
-              <div className="score">Score: {score}</div>
-              <div className="defeated">Defeated: {defeatedCreatures.length}/4</div>
-            </div>
-          </div>
-          
-          <h2>Choose Your Opponent</h2>
-          
-          <div className="creatures-grid">
-            {Object.values(creatures).map((creature) => (
-              <div 
-                key={creature.id}
-                className={`creature-card ${defeatedCreatures.includes(creature.id) ? 'defeated' : ''}`}
-                onClick={() => selectCreature(creature.id)}
-              >
-                <div className="creature-image">{creature.image}</div>
-                <h3>{creature.name}</h3>
-                <p>{creature.description}</p>
-                <div className="creature-stats">
-                  <div>Health: {creature.maxHealth}</div>
-                  <div>Weakness: {creature.weakness}</div>
-                </div>
-                {defeatedCreatures.includes(creature.id) && (
-                  <div className="defeated-overlay">✅ DEFEATED</div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <ProgressTracker 
-            score={score}
-            defeatedCreatures={defeatedCreatures}
-            spellHistory={spellHistory}
-            totalCreatures={Object.keys(creatures).length}
-          />
-
-          {spellHistory.length > 0 && (
-            <div className="spell-history-section">
-              <h3>Recent Spell History</h3>
-              <div className="spell-history">
-                {spellHistory.slice(0, 5).map((spell, index) => (
-                  <div key={index} className="spell-record">
-                    <div className="spell-text">"{spell.spell}"</div>
-                    <div className="spell-details">
-                      vs {spell.creature} | Damage: {spell.damage} | Effectiveness: {spell.effectiveness}/10 | {spell.timestamp}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        <WorldMap
+          completedStages={completedStages}
+          defeatedCreatures={defeatedCreatures}
+          score={score}
+          onSelectCreature={selectCreature}
+          onShowStory={handleStoryShow}
+        />
+        
+        <StoryModal
+          isOpen={showStoryModal}
+          onClose={handleStoryClose}
+          world={storyData.world}
+          stage={storyData.stage}
+          storyType={storyData.storyType}
+        />
       </div>
     );
   }
@@ -284,12 +374,12 @@ const GameInterface = () => {
       <div className="simple-layout">
         {/* Header with back button and score */}
         <div className="game-header">
-          <button className="back-button" onClick={backToSelection}>
-            ← Back to Selection
+          <button className="back-button" onClick={backToWorldMap}>
+            ← Back to World Map
           </button>
           <div className="game-stats">
             <div className="score">Score: {score}</div>
-            <div className="defeated">Defeated: {defeatedCreatures.length}/4</div>
+            <div className="defeated">Defeated: {defeatedCreatures.length}/{getAllCreaturesInOrder().length}</div>
           </div>
         </div>
 
@@ -312,7 +402,17 @@ const GameInterface = () => {
             {currentCreature.currentHealth}/{currentCreature.maxHealth} HP
           </div>
           <div className="weakness-info">
-            <strong>Known Weakness:</strong> {currentCreature.weakness}
+            {currentCreature.isBoss ? (
+              <div>
+                <strong>Phase {currentBossPhase}/3:</strong> {currentCreature.phases[currentBossPhase - 1].phaseDescription}
+                <br />
+                <strong>Current Weakness:</strong> {currentCreature.currentWeakness}
+              </div>
+            ) : (
+              <div>
+                <strong>Known Weakness:</strong> {currentCreature.weakness}
+              </div>
+            )}
           </div>
         </div>
 
@@ -387,7 +487,7 @@ const GameInterface = () => {
           onClose={closeVictoryModal}
           onReset={resetGame}
           creatureName={currentCreature?.name}
-          onBackToSelection={backToSelection}
+          onBackToSelection={backToWorldMap}
           earnedScore={lastEarnedScore}
         />
 
@@ -406,7 +506,7 @@ const GameInterface = () => {
                   <button className="retry-button" onClick={resetGame}>
                     Retry Fight
                   </button>
-                  <button className="choose-different-button" onClick={backToSelection}>
+                  <button className="choose-different-button" onClick={backToWorldMap}>
                     Choose Different Creature
                   </button>
                 </div>

@@ -13,17 +13,20 @@ class OpenAIService {
     });
   }
 
-  async evaluateSpell(spell, creatureType, creatureWeakness) {
+  async evaluateSpell(spell, creatureType, creatureWeakness, isBoss = false, bossPhase = null) {
     if (!this.client) {
       throw new Error('OpenAI client not initialized. Please check your API key.');
     }
 
-    const prompt = `
-
+    let prompt = `
     Creature: ${creatureType}
     Creature's Weakness: ${creatureWeakness}
     Student's Spell: "${spell}".
     `.trim();
+
+    if (isBoss && bossPhase) {
+      prompt += `\n\nThis is a BOSS BATTLE - Phase ${bossPhase}/3. Boss creatures require more sophisticated prompting techniques and higher effectiveness scores (7+) to deal significant damage.`;
+    }
 
     try {
       const response = await this.client.chat.completions.create({
@@ -33,16 +36,33 @@ class OpenAIService {
             role: 'system',
             content:
               `
-            You are a helpful game master evaluating student prompts in an educational RPG about AI literacy. You are evaluating a magical spell cast by a student learning prompt engineering. Evaluate the spell's effectiveness based on:
-            1. Clarity and specificity of the instruction
-            2. How well it targets the creature's weakness
-            3. Appropriate tone and structure
+            You are a helpful game master evaluating student prompts in an educational RPG about AI literacy. You are evaluating a magical spell cast by a student learning prompt engineering. 
+
+            CREATURE WEAKNESS EVALUATION GUIDELINES:
+            - "ice and water magic" = basic elemental spells
+            - "logical reasoning and clever solutions" = step-by-step reasoning, problem-solving
+            - "light magic and positive emotions" = hope, joy, healing spells
+            - "erosion, plant magic, and weathering" = natural processes, time-based magic
+            - "detailed thermal magic and precise temperature control" = scientific precision, exact temperatures
+            - "structured, step-by-step reasoning and systematic approaches" = numbered steps, methodical thinking
+            - "role-playing, creative narratives, and storytelling approaches" = story elements, character roleplay
+            - "explicit constraints, context setting, and boundary definitions" = clear limitations, specific context
+            - "chain-of-thought reasoning and explicit thinking processes" = showing work, thinking aloud
+            - "meta-cognitive approaches and self-reflective reasoning" = thinking about thinking
+
+            DAMAGE SCALING:
+            - Effectiveness 1-3: 0-20 damage (poor targeting of weakness)
+            - Effectiveness 4-6: 20-50 damage (partial targeting)
+            - Effectiveness 7-8: 50-80 damage (good targeting)
+            - Effectiveness 9-10: 80-100 damage (excellent targeting)
+
+            For BOSS battles, be more demanding - require sophisticated techniques and higher effectiveness (7+) for significant damage.
 
             Respond with ONLY a valid JSON object (no additional text) containing:
             {
               "effectiveness": number (1-10) (overall effectiveness score),
               "damage": number (0-100) (the damage done to the creature),
-              "feedback": "Brief explanation of why it worked/didn't work",
+              "feedback": "Brief explanation of why it worked/didn't work and what technique was used",
               "success": boolean
             }
 
