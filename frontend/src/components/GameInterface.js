@@ -7,6 +7,8 @@ import SpellTips from './SpellTips';
 import WorldMap from './WorldMap';
 import StoryModal from './StoryModal';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 const GameInterface = () => {
   const [currentCreature, setCurrentCreature] = useState(null);
   const [selectedCreatureId, setSelectedCreatureId] = useState(null);
@@ -173,7 +175,7 @@ const GameInterface = () => {
     setSpellEffect('🔮');
 
     try {
-      const response = await fetch('http://localhost:3001/api/spells/evaluate', {
+      const response = await fetch(`${API_URL}/api/spells/evaluate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
