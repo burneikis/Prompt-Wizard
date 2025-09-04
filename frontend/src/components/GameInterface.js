@@ -7,7 +7,9 @@ import SpellTips from './SpellTips';
 import WorldMap from './WorldMap';
 import StoryModal from './StoryModal';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_URL = process.env.REACT_APP_API_URL 
+  ? `https://${process.env.REACT_APP_API_URL}`
+  : 'http://localhost:3001';
 
 const GameInterface = () => {
   const [currentCreature, setCurrentCreature] = useState(null);
