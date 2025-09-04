@@ -260,32 +260,8 @@ const GameInterface = () => {
         setBattleAnimation('creature-idle');
       }
 
-      // Reduce player health after each spell (creature counter-attacks)
-      const playerDamage = Math.ceil(maxPlayerHealth / 3); // 1/3 of max health (34)
-      const newPlayerHealth = Math.max(0, playerHealth - playerDamage);
-      
-      // Animate creature attack and player taking damage
-      setTimeout(() => {
-        setBattleAnimation('creature-attack');
-        setPlayerTakingDamage(true);
-        // Update health after attack animation starts
-        setTimeout(() => {
-          setPlayerHealth(newPlayerHealth);
-        }, 400); // Update health mid-attack
-        setTimeout(() => {
-          setBattleAnimation('creature-idle');
-          setPlayerTakingDamage(false);
-        }, 800);
-      }, 1000);
-
-      // Check win/lose conditions
-      if (newPlayerHealth <= 0) {
-        // Player is defeated - show modal after health animation completes
-        setGameState('defeat');
-        setTimeout(() => {
-          setShowDefeatModal(true);
-        }, 2000); // Wait for health bar animation to complete
-      } else if (newHealth <= 0) {
+      // Check win condition FIRST - if creature is defeated, it can't attack back
+      if (newHealth <= 0) {
         // Calculate score based on effectiveness and creature difficulty
         const baseScore = currentCreature.maxHealth;
         const effectivenessBonus = result.evaluation.effectiveness * 10;
@@ -296,9 +272,36 @@ const GameInterface = () => {
         setDefeatedCreatures(prev => [...prev, currentCreature.id]);
         setGameState('victory');
         setTimeout(() => setShowVictoryModal(true), 1200);
-      } else if (damage === 0 && result.evaluation.effectiveness <= 3) {
-        // If spell was very ineffective, creature might counter-attack
-        setGameState('ready');
+      } else {
+        // Creature is still alive - it can counter-attack
+        const playerDamage = Math.ceil(maxPlayerHealth / 3); // 1/3 of max health (34)
+        const newPlayerHealth = Math.max(0, playerHealth - playerDamage);
+        
+        // Animate creature attack and player taking damage
+        setTimeout(() => {
+          setBattleAnimation('creature-attack');
+          setPlayerTakingDamage(true);
+          // Update health after attack animation starts
+          setTimeout(() => {
+            setPlayerHealth(newPlayerHealth);
+          }, 400); // Update health mid-attack
+          setTimeout(() => {
+            setBattleAnimation('creature-idle');
+            setPlayerTakingDamage(false);
+          }, 800);
+        }, 1000);
+
+        // Check if player is defeated AFTER creature attacks
+        if (newPlayerHealth <= 0) {
+          // Player is defeated - show modal after health animation completes
+          setGameState('defeat');
+          setTimeout(() => {
+            setShowDefeatModal(true);
+          }, 2000); // Wait for health bar animation to complete
+        } else if (damage === 0 && result.evaluation.effectiveness <= 3) {
+          // If spell was very ineffective, just continue battle
+          setGameState('ready');
+        }
       }
 
     } catch (error) {
