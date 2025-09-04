@@ -49,9 +49,9 @@
 ## Phase 4: Deploy & Test
 
 ### 4.1 Deployment
-- [ ] Deploy frontend (Vercel)
-- [ ] Deploy backend (Railway)
-- [ ] Test full system works online
+- [x] Deploy frontend (Vercel)
+- [x] Deploy backend (Railway)
+- [x] Test full system works online
 
 ### 4.2 Basic Testing
 - [ ] Test with a few users
