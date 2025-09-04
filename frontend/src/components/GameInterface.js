@@ -64,6 +64,38 @@ const GameInterface = () => {
     checkStageCompletion();
   }, [defeatedCreatures]);
 
+  // Console command for development - skip to final boss
+  useEffect(() => {
+    window.skipToFinalBoss = () => {
+      console.log('Skipping to final boss...');
+      // Set all creatures as defeated except the final boss
+      const allCreatures = getAllCreaturesInOrder();
+      const finalBossId = 'ancientOracle';
+      const allExceptFinalBoss = allCreatures.filter(c => c.id !== finalBossId).map(c => c.id);
+      
+      // Complete all stages except the final one
+      const allStages = [];
+      Object.values(worlds).forEach(world => {
+        world.stages.forEach(stage => {
+          if (stage.id !== 'sanctum_final') {
+            allStages.push(stage.id);
+          }
+        });
+      });
+      
+      setDefeatedCreatures(allExceptFinalBoss);
+      setCompletedStages(allStages);
+      console.log('Progress updated! You can now access the final boss.');
+    };
+    
+    console.log('Console command available: skipToFinalBoss()');
+    
+    // Cleanup
+    return () => {
+      delete window.skipToFinalBoss;
+    };
+  }, [maxPlayerHealth]);
+
   const checkStageCompletion = () => {
     for (const world of Object.values(worlds)) {
       for (const stage of world.stages) {
@@ -415,29 +447,9 @@ const GameInterface = () => {
           <div className="creature-name">
             <h2>{currentCreature.name}</h2>
           </div>
-          <div className="health-bar">
-            <div 
-              className="health-fill"
-              style={{
-                width: `${(currentCreature.currentHealth / currentCreature.maxHealth) * 100}%`,
-                backgroundColor: currentCreature.currentHealth > currentCreature.maxHealth * 0.5 ? '#22c55e' : 
-                                currentCreature.currentHealth > currentCreature.maxHealth * 0.2 ? '#fbbf24' : '#ef4444'
-              }}
-            ></div>
-          </div>
-          <div className="health-text">
-            {currentCreature.isBoss ? (
-              <div>
-                <div>Total: {currentCreature.currentHealth}/{currentCreature.maxHealth} HP</div>
-                <div>Phase {currentBossPhase}: {bossPhaseHealth}/{currentCreature.phases[currentBossPhase - 1].phaseHealth} HP</div>
-              </div>
-            ) : (
-              <div>{currentCreature.currentHealth}/{currentCreature.maxHealth} HP</div>
-            )}
-          </div>
-
-          {/* Boss Phase Health Bar */}
-          {currentCreature.isBoss && (
+          
+          {/* Show phase health bar for bosses, regular health bar for normal creatures */}
+          {currentCreature.isBoss ? (
             <div className="phase-health-section">
               <div className="phase-health-label">
                 Phase {currentBossPhase}/3 Progress
@@ -451,7 +463,26 @@ const GameInterface = () => {
                   }}
                 ></div>
               </div>
+              <div className="health-text">
+                Phase {currentBossPhase}: {bossPhaseHealth}/{currentCreature.phases[currentBossPhase - 1].phaseHealth} HP
+              </div>
             </div>
+          ) : (
+            <>
+              <div className="health-bar">
+                <div 
+                  className="health-fill"
+                  style={{
+                    width: `${(currentCreature.currentHealth / currentCreature.maxHealth) * 100}%`,
+                    backgroundColor: currentCreature.currentHealth > currentCreature.maxHealth * 0.5 ? '#22c55e' : 
+                                    currentCreature.currentHealth > currentCreature.maxHealth * 0.2 ? '#fbbf24' : '#ef4444'
+                  }}
+                ></div>
+              </div>
+              <div className="health-text">
+                {currentCreature.currentHealth}/{currentCreature.maxHealth} HP
+              </div>
+            </>
           )}
 
           <div className="weakness-info">
