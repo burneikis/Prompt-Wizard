@@ -49,8 +49,8 @@
 ## Phase 4: Deploy & Test
 
 ### 4.1 Deployment
-- [ ] Deploy frontend (Vercel/Netlify)
-- [ ] Deploy backend (Railway/Heroku)
+- [ ] Deploy frontend (Vercel)
+- [ ] Deploy backend (Railway)
 - [ ] Test full system works online
 
 ### 4.2 Basic Testing
