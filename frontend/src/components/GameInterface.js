@@ -451,9 +451,6 @@ const GameInterface = () => {
           {/* Show phase health bar for bosses, regular health bar for normal creatures */}
           {currentCreature.isBoss ? (
             <div className="phase-health-section">
-              <div className="phase-health-label">
-                Phase {currentBossPhase}/3 Progress
-              </div>
               <div className="phase-health-bar">
                 <div 
                   className="phase-health-fill"
