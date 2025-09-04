@@ -1496,35 +1496,58 @@ body {
   font-weight: 500;
 }
 
-/* Defeat Message Styles */
-.defeat-message {
-  padding: var(--spacing-xl);
-  background: linear-gradient(135deg, #fee7e7, #fecaca);
-  border: 2px solid var(--danger-color);
-  border-radius: var(--radius-lg);
+/* Defeat Modal Styles */
+.defeat-modal {
+  padding: var(--spacing-2xl);
   text-align: center;
-  box-shadow: var(--shadow-lg);
 }
 
-.defeat-message h3 {
+@media (max-width: 639px) {
+  .defeat-modal {
+    padding: var(--spacing-xl);
+  }
+}
+
+.defeat-header h2 {
+  font-size: 1.875rem;
   color: var(--danger-color);
-  font-size: 1.5rem;
+  margin-bottom: var(--spacing-lg);
   font-weight: 700;
-  margin-bottom: var(--spacing-md);
 }
 
-.defeat-message p {
-  color: #7f1d1d;
-  margin-bottom: var(--spacing-xl);
+@media (min-width: 640px) {
+  .defeat-header h2 {
+    font-size: 2.25rem;
+  }
+}
+
+.defeat-body {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.defeat-body p {
+  color: var(--text-secondary);
   font-size: 1rem;
+  margin-bottom: var(--spacing-sm);
   line-height: 1.6;
 }
 
-.defeat-buttons {
+@media (min-width: 640px) {
+  .defeat-body p {
+    font-size: 1.125rem;
+  }
+}
+
+.defeat-actions {
   display: flex;
   gap: var(--spacing-md);
   justify-content: center;
-  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .defeat-actions {
+    flex-direction: column;
+  }
 }
 
 .retry-button,

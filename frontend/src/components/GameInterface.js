@@ -22,6 +22,7 @@ const GameInterface = () => {
   const [playerHealth, setPlayerHealth] = useState(100);
   const [maxPlayerHealth] = useState(100);
   const [playerTakingDamage, setPlayerTakingDamage] = useState(false);
+  const [showDefeatModal, setShowDefeatModal] = useState(false);
 
   const selectCreature = (creatureId) => {
     const creature = creatures[creatureId];
@@ -131,7 +132,7 @@ const GameInterface = () => {
       }));
 
       // Reduce player health after each spell (creature counter-attacks)
-      const playerDamage = Math.floor(maxPlayerHealth / 3); // 1/3 of max health
+      const playerDamage = Math.ceil(maxPlayerHealth / 3); // 1/3 of max health (34)
       const newPlayerHealth = Math.max(0, playerHealth - playerDamage);
       
       // Animate creature attack and player taking damage
@@ -149,9 +150,12 @@ const GameInterface = () => {
       }, 1000);
 
       // Check win/lose conditions
-      if (newPlayerHealth <= 1) {
-        // Player is defeated
+      if (newPlayerHealth <= 0) {
+        // Player is defeated - show modal after health animation completes
         setGameState('defeat');
+        setTimeout(() => {
+          setShowDefeatModal(true);
+        }, 2000); // Wait for health bar animation to complete
       } else if (newHealth <= 0) {
         // Calculate score based on effectiveness and creature difficulty
         const baseScore = currentCreature.maxHealth;
@@ -195,6 +199,7 @@ const GameInterface = () => {
     setBattleResult(null);
     setGameState('ready');
     setShowVictoryModal(false);
+    setShowDefeatModal(false);
     setPlayerHealth(maxPlayerHealth); // Reset player health
   };
 
@@ -204,6 +209,7 @@ const GameInterface = () => {
     setBattleResult(null);
     setGameState('selection');
     setShowVictoryModal(false);
+    setShowDefeatModal(false);
     setPlayerHealth(maxPlayerHealth); // Reset player health
   };
 
@@ -337,11 +343,6 @@ const GameInterface = () => {
                 💀
               </div>
             )}
-            {gameState === 'defeat' && (
-              <div className="defeat-overlay">
-                ⚰️
-              </div>
-            )}
           </div>
         </div>
 
@@ -370,20 +371,7 @@ const GameInterface = () => {
             />
           </div>
           <div className="spell-tips-container">
-            {gameState === 'defeat' ? (
-              <div className="defeat-message">
-                <h3>Encounter Failed!</h3>
-                <p>Your magical energy has been depleted. The {currentCreature.name} has overwhelmed you!</p>
-                <div className="defeat-buttons">
-                  <button className="retry-button" onClick={resetGame}>
-                    Retry Fight
-                  </button>
-                  <button className="choose-different-button" onClick={backToSelection}>
-                    Choose Different Creature
-                  </button>
-                </div>
-              </div>
-            ) : battleResult ? (
+            {battleResult ? (
               <BattleResult 
                 result={battleResult} 
                 gameState={gameState}
@@ -402,6 +390,30 @@ const GameInterface = () => {
           onBackToSelection={backToSelection}
           earnedScore={lastEarnedScore}
         />
+
+        {/* Defeat Modal */}
+        {showDefeatModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="defeat-modal">
+                <div className="defeat-header">
+                  <h2>Encounter Failed!</h2>
+                </div>
+                <div className="defeat-body">
+                  <p>Your magical energy has been depleted. The {currentCreature.name} has overwhelmed you!</p>
+                </div>
+                <div className="defeat-actions">
+                  <button className="retry-button" onClick={resetGame}>
+                    Retry Fight
+                  </button>
+                  <button className="choose-different-button" onClick={backToSelection}>
+                    Choose Different Creature
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
