@@ -35,10 +35,10 @@
 - [x] Error handling for API failures
 
 ### 3.3 Fail Condition
-- [ ] Player Health bar (underneath the creature, above our casting box area)
-- [ ] After every spell (that isnt moderated) a third of the players health is taken
-- [ ] If health reaches 0, display encounter failed, and we can restart the fight or fight a different creature
-- [ ] Animations for the creatures attacking, and our health going down
+- [x] Player Health bar (underneath the creature, above our casting box area)
+- [x] After every spell (that isnt moderated) a third of the players health is taken
+- [x] If health reaches 0, display encounter failed, and we can restart the fight or fight a different creature
+- [x] Animations for the creatures attacking, and our health going down
 
 ### Phase 3.4: Game improvement
 Develop the game, add stages, progression, map, different enemies, story?

@@ -19,6 +19,9 @@ const GameInterface = () => {
   const [lastEarnedScore, setLastEarnedScore] = useState(0);
   const [battleAnimation, setBattleAnimation] = useState('');
   const [spellEffect, setSpellEffect] = useState('');
+  const [playerHealth, setPlayerHealth] = useState(100);
+  const [maxPlayerHealth] = useState(100);
+  const [playerTakingDamage, setPlayerTakingDamage] = useState(false);
 
   const selectCreature = (creatureId) => {
     const creature = creatures[creatureId];
@@ -31,6 +34,8 @@ const GameInterface = () => {
     setBattleResult(null);
     setBattleAnimation('creature-idle');
     setSpellEffect('');
+    setPlayerHealth(maxPlayerHealth); // Reset player health when selecting creature
+    setPlayerTakingDamage(false);
   };
 
   const handleSpellCast = async (spellText) => {
@@ -125,8 +130,29 @@ const GameInterface = () => {
         currentHealth: newHealth
       }));
 
+      // Reduce player health after each spell (creature counter-attacks)
+      const playerDamage = Math.floor(maxPlayerHealth / 3); // 1/3 of max health
+      const newPlayerHealth = Math.max(0, playerHealth - playerDamage);
+      
+      // Animate creature attack and player taking damage
+      setTimeout(() => {
+        setBattleAnimation('creature-attack');
+        setPlayerTakingDamage(true);
+        // Update health after attack animation starts
+        setTimeout(() => {
+          setPlayerHealth(newPlayerHealth);
+        }, 400); // Update health mid-attack
+        setTimeout(() => {
+          setBattleAnimation('creature-idle');
+          setPlayerTakingDamage(false);
+        }, 800);
+      }, 1000);
+
       // Check win/lose conditions
-      if (newHealth <= 0) {
+      if (newPlayerHealth <= 1) {
+        // Player is defeated
+        setGameState('defeat');
+      } else if (newHealth <= 0) {
         // Calculate score based on effectiveness and creature difficulty
         const baseScore = currentCreature.maxHealth;
         const effectivenessBonus = result.evaluation.effectiveness * 10;
@@ -169,6 +195,7 @@ const GameInterface = () => {
     setBattleResult(null);
     setGameState('ready');
     setShowVictoryModal(false);
+    setPlayerHealth(maxPlayerHealth); // Reset player health
   };
 
   const backToSelection = () => {
@@ -177,6 +204,7 @@ const GameInterface = () => {
     setBattleResult(null);
     setGameState('selection');
     setShowVictoryModal(false);
+    setPlayerHealth(maxPlayerHealth); // Reset player health
   };
 
   const closeVictoryModal = () => {
@@ -309,6 +337,26 @@ const GameInterface = () => {
                 💀
               </div>
             )}
+            {gameState === 'defeat' && (
+              <div className="defeat-overlay">
+                ⚰️
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Player health bar */}
+        <div className="player-health-section">
+          <div className="player-health-label">Your Health</div>
+          <div className={`player-health-bar ${playerTakingDamage ? 'taking-damage' : ''}`}>
+            <div 
+              className="player-health-fill"
+              style={{
+                width: `${(playerHealth / maxPlayerHealth) * 100}%`,
+                backgroundColor: playerHealth > maxPlayerHealth * 0.5 ? '#22c55e' : 
+                                playerHealth > maxPlayerHealth * 0.2 ? '#fbbf24' : '#ef4444'
+              }}
+            ></div>
           </div>
         </div>
 
@@ -318,11 +366,24 @@ const GameInterface = () => {
             <SpellInput 
               onSpellCast={handleSpellCast}
               isLoading={isLoading}
-              disabled={gameState === 'victory'}
+              disabled={gameState === 'victory' || gameState === 'defeat'}
             />
           </div>
           <div className="spell-tips-container">
-            {battleResult ? (
+            {gameState === 'defeat' ? (
+              <div className="defeat-message">
+                <h3>Encounter Failed!</h3>
+                <p>Your magical energy has been depleted. The {currentCreature.name} has overwhelmed you!</p>
+                <div className="defeat-buttons">
+                  <button className="retry-button" onClick={resetGame}>
+                    Retry Fight
+                  </button>
+                  <button className="choose-different-button" onClick={backToSelection}>
+                    Choose Different Creature
+                  </button>
+                </div>
+              </div>
+            ) : battleResult ? (
               <BattleResult 
                 result={battleResult} 
                 gameState={gameState}

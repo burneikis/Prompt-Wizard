@@ -176,6 +176,14 @@ body {
   animation: bounce 2s infinite;
 }
 
+.defeat-overlay {
+  position: absolute;
+  font-size: 2.5rem;
+  top: -1rem;
+  right: -1rem;
+  animation: defeat-shake 2s infinite;
+}
+
 @media (min-width: 640px) {
   .victory-overlay {
     font-size: 3rem;
@@ -193,6 +201,60 @@ body {
   }
   60% {
     transform: translateY(-5px);
+  }
+}
+
+@keyframes defeat-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-3px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes creature-attack {
+  0% { 
+    transform: scale(1) translateY(0); 
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15)); 
+  }
+  25% { 
+    transform: scale(1.15) translateY(-10px); 
+    filter: drop-shadow(0 8px 25px rgba(239, 68, 68, 0.6)) hue-rotate(180deg);
+  }
+  50% { 
+    transform: scale(1.2) translateY(-5px); 
+    filter: drop-shadow(0 8px 30px rgba(239, 68, 68, 0.8)) hue-rotate(360deg);
+  }
+  75% { 
+    transform: scale(1.05) translateY(-2px); 
+    filter: drop-shadow(0 6px 20px rgba(239, 68, 68, 0.4)) hue-rotate(180deg);
+  }
+  100% { 
+    transform: scale(1) translateY(0); 
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15)); 
+  }
+}
+
+@keyframes health-damage {
+  0%, 100% {
+    box-shadow: var(--shadow-sm);
+    transform: translateX(0);
+  }
+  25% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+    transform: translateX(-3px);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 1);
+    transform: translateX(3px);
+  }
+  75% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+    transform: translateX(-2px);
   }
 }
 
@@ -1133,7 +1195,7 @@ body {
   align-items: center;
   width: 100%;
   max-width: 1200px;
-  margin-bottom: var(--spacing-lg);
+  /* margin-bottom: var(--spacing-lg); */
 }
 
 .back-button {
@@ -1207,6 +1269,10 @@ body {
 
 .creature-casting {
   animation: casting-glow 2s ease-in-out infinite;
+}
+
+.creature-attack {
+  animation: creature-attack 0.8s ease-in-out;
 }
 
 .spell-cast-effect {
@@ -1380,4 +1446,120 @@ body {
     gap: var(--spacing-md);
     text-align: center;
   }
+}
+
+/* Player Health Section */
+.player-health-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  width: 100%;
+  max-width: 400px;
+  /* margin: var(--spacing-sm) 0; */
+}
+
+.player-health-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.player-health-bar {
+  width: 100%;
+  max-width: 350px;
+  height: 20px;
+  background: var(--tertiary-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.player-health-bar.taking-damage {
+  animation: health-damage 0.8s ease-in-out;
+  border-color: var(--danger-color);
+}
+
+.player-health-fill {
+  height: 100%;
+  transition: all 0.5s ease;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.player-health-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Defeat Message Styles */
+.defeat-message {
+  padding: var(--spacing-xl);
+  background: linear-gradient(135deg, #fee7e7, #fecaca);
+  border: 2px solid var(--danger-color);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.defeat-message h3 {
+  color: var(--danger-color);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+}
+
+.defeat-message p {
+  color: #7f1d1d;
+  margin-bottom: var(--spacing-xl);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.defeat-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.retry-button,
+.choose-different-button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-family);
+  box-shadow: var(--shadow-sm);
+}
+
+.retry-button {
+  background: var(--danger-color);
+  color: white;
+  border: 2px solid var(--danger-color);
+}
+
+.retry-button:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.choose-different-button {
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.choose-different-button:hover {
+  background: var(--tertiary-bg);
+  border-color: var(--text-secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
