@@ -56,7 +56,7 @@ class OpenAIService {
             - Effectiveness 7-8: 50-80 damage (good targeting)
             - Effectiveness 9-10: 80-100 damage (excellent targeting)
 
-            For BOSS battles, be more demanding - require sophisticated techniques and higher effectiveness (7+) for significant damage.
+            For BOSS battles, be challenging but fair - effectiveness 5+ should deal reasonable damage (30+). Recognize partial attempts at the required technique.
 
             Respond with ONLY a valid JSON object (no additional text) containing:
             {

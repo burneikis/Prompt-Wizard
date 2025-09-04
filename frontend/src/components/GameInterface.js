@@ -211,6 +211,14 @@ const GameInterface = () => {
         const newPhaseHealth = Math.max(0, bossPhaseHealth - damage);
         setBossPhaseHealth(newPhaseHealth);
         
+        // Calculate overall health based on phases completed + current phase damage
+        let totalHealthLost = 0;
+        for (let i = 0; i < currentBossPhase - 1; i++) {
+          totalHealthLost += currentCreature.phases[i].phaseHealth;
+        }
+        totalHealthLost += (currentCreature.phases[currentBossPhase - 1].phaseHealth - newPhaseHealth);
+        newHealth = currentCreature.maxHealth - totalHealthLost;
+        
         if (newPhaseHealth <= 0 && currentBossPhase < currentCreature.phases.length) {
           // Phase completed, move to next phase
           phaseCompleted = true;
@@ -224,13 +232,16 @@ const GameInterface = () => {
               ...prev,
               currentPhase: nextPhase,
               currentWeakness: phaseData.weakness,
-              currentHealth: prev.currentHealth - (currentCreature.phases[0].phaseHealth) // Reduce overall health
+              currentHealth: newHealth
             }));
           }
+        } else {
+          // Update current health
+          setCurrentCreature(prev => ({
+            ...prev,
+            currentHealth: newHealth
+          }));
         }
-        
-        newHealth = currentCreature.maxHealth - ((currentBossPhase - 1) * currentCreature.phases[0].phaseHealth) - (currentCreature.phases[0].phaseHealth - bossPhaseHealth);
-        newHealth = Math.max(0, newHealth);
       } else {
         // Regular creature damage
         newHealth = Math.max(0, currentCreature.currentHealth - damage);
@@ -274,7 +285,20 @@ const GameInterface = () => {
         setTimeout(() => setShowVictoryModal(true), 1200);
       } else {
         // Creature is still alive - it can counter-attack
-        const playerDamage = Math.ceil(maxPlayerHealth / 3); // 1/3 of max health (34)
+        let playerDamage;
+        if (currentCreature.isBoss) {
+          // Boss damage depends on effectiveness - reward good attempts
+          if (effectiveness >= 7) {
+            playerDamage = Math.ceil(maxPlayerHealth / 8); // 12.5% damage for good attempts
+          } else if (effectiveness >= 4) {
+            playerDamage = Math.ceil(maxPlayerHealth / 5); // 20% damage for decent attempts
+          } else {
+            playerDamage = Math.ceil(maxPlayerHealth / 4); // 25% damage for poor attempts
+          }
+        } else {
+          // Regular creatures do 1/3 damage
+          playerDamage = Math.ceil(maxPlayerHealth / 3);
+        }
         const newPlayerHealth = Math.max(0, playerHealth - playerDamage);
         
         // Animate creature attack and player taking damage
@@ -402,8 +426,34 @@ const GameInterface = () => {
             ></div>
           </div>
           <div className="health-text">
-            {currentCreature.currentHealth}/{currentCreature.maxHealth} HP
+            {currentCreature.isBoss ? (
+              <div>
+                <div>Total: {currentCreature.currentHealth}/{currentCreature.maxHealth} HP</div>
+                <div>Phase {currentBossPhase}: {bossPhaseHealth}/{currentCreature.phases[currentBossPhase - 1].phaseHealth} HP</div>
+              </div>
+            ) : (
+              <div>{currentCreature.currentHealth}/{currentCreature.maxHealth} HP</div>
+            )}
           </div>
+
+          {/* Boss Phase Health Bar */}
+          {currentCreature.isBoss && (
+            <div className="phase-health-section">
+              <div className="phase-health-label">
+                Phase {currentBossPhase}/3 Progress
+              </div>
+              <div className="phase-health-bar">
+                <div 
+                  className="phase-health-fill"
+                  style={{
+                    width: `${(bossPhaseHealth / currentCreature.phases[currentBossPhase - 1].phaseHealth) * 100}%`,
+                    backgroundColor: '#8b5cf6'
+                  }}
+                ></div>
+              </div>
+            </div>
+          )}
+
           <div className="weakness-info">
             {currentCreature.isBoss ? (
               <div>

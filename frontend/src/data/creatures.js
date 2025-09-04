@@ -247,7 +247,7 @@ export const creatures = {
     id: 'ancientOracle', 
     name: 'Ancient AI Oracle',
     description: 'The ultimate test - a multi-phase AI entity that adapts to your prompting style',
-    maxHealth: 300,
+    maxHealth: 250,
     weakness: 'adaptive - changes based on battle phase',
     image: '🔮🧠',
     world: 'ancientSanctum',
@@ -262,19 +262,19 @@ export const creatures = {
     phases: [
       {
         phase: 1,
-        phaseHealth: 100,
+        phaseHealth: 80,
         weakness: 'clarity and specificity',
         phaseDescription: 'The Oracle tests your ability to give clear, specific instructions'
       },
       {
         phase: 2,
-        phaseHealth: 100,  
+        phaseHealth: 90,  
         weakness: 'logical reasoning and chain-of-thought',
         phaseDescription: 'The Oracle challenges your logical reasoning abilities'
       },
       {
         phase: 3,
-        phaseHealth: 100,
+        phaseHealth: 80,
         weakness: 'creativity, context, and advanced techniques',
         phaseDescription: 'The Oracle demands your most advanced prompt engineering skills'
       }

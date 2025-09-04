@@ -1448,6 +1448,40 @@ body {
   }
 }
 
+/* Phase Health Section (for bosses) */
+.phase-health-section {
+  margin-top: var(--spacing-md);
+  width: 100%;
+  max-width: 400px;
+}
+
+.phase-health-label {
+  text-align: center;
+  font-weight: 600;
+  color: var(--magic-primary);
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+.phase-health-bar {
+  width: 100%;
+  height: 16px;
+  background: var(--tertiary-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 2px solid var(--magic-primary);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.phase-health-fill {
+  height: 100%;
+  transition: all 0.5s ease;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(90deg, var(--magic-primary), var(--magic-secondary));
+}
+
 /* Player Health Section */
 .player-health-section {
   display: flex;
