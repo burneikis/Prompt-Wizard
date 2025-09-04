@@ -41,7 +41,10 @@
 - [x] Animations for the creatures attacking, and our health going down
 
 ### Phase 3.4: Game improvement
-Develop the game, add stages, progression, map, different enemies, story?
+- [ ] Stages, Progression
+- [ ] Map, Story
+- [ ] New Enemies
+- [ ] Final Boss
 
 ## Phase 4: Deploy & Test
 
