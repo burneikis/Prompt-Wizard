@@ -158,8 +158,11 @@ const WorldMap = ({
 
                 {stageCompleted && (
                   <div className="stage-completed-overlay">
-                    ⭐ STAGE COMPLETE
-                    <div className="replay-hint">Click creatures to replay</div>
+                    <div>
+                      ⭐ STAGE COMPLETE
+                      <br />
+                      <div className="replay-hint">Click creatures to replay</div>
+                    </div>
                   </div>
                 )}
               </div>

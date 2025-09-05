@@ -53,6 +53,8 @@
 - [x] Deploy backend (Railway)
 - [x] Test full system works online
 
+- [ ] local storage saving (isnt working rn)
+
 ### 4.2 Basic Testing
 - [ ] Test with a few users
 - [ ] Fix major bugs

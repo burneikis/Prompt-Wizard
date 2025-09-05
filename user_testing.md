@@ -15,7 +15,7 @@ Sent it to my mate lachlan for feedback.
 - [x] Add heal spell detection (in the backend/prompting), if the user says something that sounds like a healing spell on themselves, use that during their turn
 - [x] Add spell history log to the left side of the screen (only the spells that passed moderation)
 - [x] Add enter to submit spell, (shift enter shouldn't)
-- [ ] Allow going back to past stages after they complete (dont give points for replaying tho)
+- [x] Allow going back to past stages after they complete (dont give points for replaying tho)
 
 
 ## More Todo

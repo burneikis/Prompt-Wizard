@@ -2000,6 +2000,7 @@ body {
 
 .stage-completed-overlay {
   background: rgba(16, 185, 129, 0.9);
+  pointer-events: none;
 }
 
 /* Legend */
@@ -2500,4 +2501,5 @@ body {
   color: var(--text-secondary);
   margin-top: 4px;
   font-style: italic;
+  text-align: center;
 }
