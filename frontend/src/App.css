@@ -136,6 +136,7 @@ body {
   align-items: center;
   width: 100%;
   min-height: 200px;
+  padding: var(--spacing-md);
 }
 
 
@@ -1218,14 +1219,7 @@ body {
   box-shadow: var(--shadow-md);
 }
 
-/* Update creature center styles */
-.creature-center {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: var(--spacing-lg);
-}
+/* Removed duplicate - creature-center defined below */
 
 .creature-emoji {
   font-size: 5rem;
@@ -2346,4 +2340,164 @@ body {
   .story-image {
     font-size: 1.8rem;
   }
+}
+
+/* Fixed Spell History Styles */
+.spell-history-fixed {
+  position: fixed;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  width: 280px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+/* Hide on mobile */
+@media (max-width: 768px) {
+  .spell-history-fixed {
+    display: none;
+  }
+}
+
+.spell-history {
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-md);
+  height: fit-content;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.spell-history h3 {
+  color: var(--magic-primary);
+  margin-bottom: var(--spacing-md);
+  font-size: 1rem;
+  text-align: center;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: var(--spacing-sm);
+}
+
+.no-history {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: var(--spacing-lg);
+}
+
+.no-history p {
+  font-size: 0.85rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.spell-entry {
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.spell-entry:hover {
+  border-color: var(--magic-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.spell-entry.damage {
+  border-left: 3px solid var(--danger-color);
+}
+
+.spell-entry.healing {
+  border-left: 3px solid var(--success-color);
+}
+
+.spell-entry.ineffective {
+  border-left: 3px solid var(--text-secondary);
+}
+
+.spell-text {
+  font-style: italic;
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.3;
+  color: var(--text-primary);
+  font-size: 0.75rem;
+}
+
+.spell-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.spell-target {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.spell-stats {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.spell-stats span {
+  font-size: 0.65rem;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.damage-stat {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+}
+
+.healing-stat {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+}
+
+.effectiveness-stat {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--magic-primary);
+}
+
+.spell-time {
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.creature-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Mobile responsiveness for main content */
+@media (max-width: 768px) {
+  .main-content {
+    min-height: 150px;
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Replay hint styles */
+.replay-hint {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-style: italic;
 }

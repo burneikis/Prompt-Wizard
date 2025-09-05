@@ -137,8 +137,8 @@ const WorldMap = ({
                   {creatures.map((creature) => (
                     <div
                       key={creature.id}
-                      className={`creature-mini ${isCreatureDefeated(creature.id) ? 'defeated' : ''} ${!stageAvailable ? 'locked' : ''}`}
-                      onClick={() => stageAvailable && onSelectCreature(creature.id)}
+                      className={`creature-mini ${isCreatureDefeated(creature.id) ? 'defeated' : ''} ${!stageAvailable && !stageCompleted ? 'locked' : ''}`}
+                      onClick={() => (stageAvailable || stageCompleted) && onSelectCreature(creature.id)}
                       title={creature.name}
                     >
                       <div className="creature-mini-image">{creature.image}</div>
@@ -150,7 +150,7 @@ const WorldMap = ({
                   ))}
                 </div>
 
-                {!stageAvailable && (
+                {!stageAvailable && !stageCompleted && (
                   <div className="stage-locked-overlay">
                     🔒 Complete required stages first
                   </div>
@@ -159,6 +159,7 @@ const WorldMap = ({
                 {stageCompleted && (
                   <div className="stage-completed-overlay">
                     ⭐ STAGE COMPLETE
+                    <div className="replay-hint">Click creatures to replay</div>
                   </div>
                 )}
               </div>

@@ -18,6 +18,9 @@ class OpenAIService {
       throw new Error('OpenAI client not initialized. Please check your API key.');
     }
 
+    // First check if this is a healing spell
+    const healingCheck = await this.checkForHealingSpell(spell);
+    
     let prompt = `
     Creature: ${creatureType}
     Creature's Weakness: ${creatureWeakness}
@@ -26,6 +29,10 @@ class OpenAIService {
 
     if (isBoss && bossPhase) {
       prompt += `\n\nThis is a BOSS BATTLE - Phase ${bossPhase}/3. Boss creatures require more sophisticated prompting techniques and higher effectiveness scores (7+) to deal significant damage.`;
+    }
+
+    if (healingCheck.isHealing) {
+      prompt += `\n\nNOTE: This appears to be a HEALING SPELL for the student. Healing spells should have effectiveness 0 for creature damage but provide positive feedback about the healing attempt.`;
     }
 
     try {
@@ -58,12 +65,18 @@ class OpenAIService {
 
             For BOSS battles, be challenging but fair - effectiveness 5+ should deal reasonable damage (30+). Recognize partial attempts at the required technique.
 
+            For HEALING spells, evaluate creativity and clarity:
+            - Simple healing: 10-20 HP (e.g., "heal myself")
+            - Creative healing: 25-35 HP (e.g., "channel warm light to mend my wounds")
+            - Very creative/detailed healing: 40-50 HP (e.g., detailed magical restoration process)
+
             Respond with ONLY a valid JSON object (no additional text) containing:
             {
               "effectiveness": number (1-10) (overall effectiveness score),
               "damage": number (0-100) (the damage done to the creature),
               "feedback": "Brief explanation of why it worked/didn't work and what technique was used",
-              "success": boolean
+              "success": boolean,
+              "healing": number (0-50) (if this is a healing spell, amount healed based on creativity, otherwise 0)
             }
 
             Be encouraging but honest in your evaluation. Return only the JSON, nothing else.
@@ -106,6 +119,23 @@ class OpenAIService {
           throw new Error('Invalid response format - missing required fields');
         }
 
+        // Ensure healing field exists
+        if (typeof parsed.healing !== 'number') {
+          parsed.healing = 0;
+        }
+
+        // If healing spell, override damage to 0 and ensure healing amount is set properly
+        if (healingCheck.isHealing) {
+          parsed.damage = 0;
+          // If AI didn't provide healing amount, calculate based on effectiveness
+          if (!parsed.healing || parsed.healing === 0) {
+            parsed.healing = Math.min(50, Math.max(10, parsed.effectiveness * 5));
+          }
+          // Ensure healing is within bounds
+          parsed.healing = Math.min(50, Math.max(10, parsed.healing));
+          parsed.feedback += ` You restored ${parsed.healing} health!`;
+        }
+
         return parsed;
       } catch (parseError) {
         console.error('JSON parse error:', parseError);
@@ -144,6 +174,72 @@ class OpenAIService {
       console.error('Content moderation error:', error);
       // Return safe default if moderation fails
       return { flagged: false, categories: {} };
+    }
+  }
+
+  async checkForHealingSpell(spell) {
+    if (!this.client) {
+      // Fallback detection using keywords
+      const healingKeywords = ['heal', 'cure', 'restore', 'regenerate', 'mend', 'recovery', 'health', 'vitality', 'rejuvenate'];
+      const selfKeywords = ['myself', 'me', 'my health', 'my wounds', 'my body'];
+      
+      const lowerSpell = spell.toLowerCase();
+      const hasHealingWord = healingKeywords.some(word => lowerSpell.includes(word));
+      const hasSelfReference = selfKeywords.some(word => lowerSpell.includes(word)) || !lowerSpell.includes('dragon') && !lowerSpell.includes('creature');
+      
+      return { isHealing: hasHealingWord && hasSelfReference };
+    }
+
+    try {
+      const response = await this.client.chat.completions.create({
+        model: 'gpt-5-nano',
+        messages: [
+          {
+            role: 'system',
+            content: `You are analyzing whether a spell is intended to heal the caster (student) rather than attack a creature. 
+
+Respond with ONLY a valid JSON object:
+{
+  "isHealing": boolean (true if this is a healing spell for the caster, false if it's an attack)
+}
+
+Healing spells typically:
+- Mention healing, restoring, mending the caster
+- Use words like "heal myself", "restore my health", "cure my wounds"
+- Focus on the caster's wellbeing rather than attacking
+
+Attack spells typically:
+- Target the creature/enemy
+- Mention damage, destruction, attacking
+- Use elemental or combat magic`
+          },
+          {
+            role: 'user',
+            content: `Spell: "${spell}"`
+          }
+        ]
+      });
+
+      const result = response.choices[0].message.content;
+      const jsonMatch = result.match(/\{[\s\S]*\}/);
+      
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return { isHealing: parsed.isHealing || false };
+      }
+      
+      return { isHealing: false };
+    } catch (error) {
+      console.error('Healing detection error:', error);
+      // Fallback to keyword detection
+      const healingKeywords = ['heal', 'cure', 'restore', 'regenerate', 'mend', 'recovery', 'health', 'vitality', 'rejuvenate'];
+      const selfKeywords = ['myself', 'me', 'my health', 'my wounds', 'my body'];
+      
+      const lowerSpell = spell.toLowerCase();
+      const hasHealingWord = healingKeywords.some(word => lowerSpell.includes(word));
+      const hasSelfReference = selfKeywords.some(word => lowerSpell.includes(word)) || !lowerSpell.includes('dragon') && !lowerSpell.includes('creature');
+      
+      return { isHealing: hasHealingWord && hasSelfReference };
     }
   }
 }

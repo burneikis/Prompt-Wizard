@@ -6,6 +6,7 @@ import VictoryModal from './VictoryModal';
 import SpellTips from './SpellTips';
 import WorldMap from './WorldMap';
 import StoryModal from './StoryModal';
+import SpellHistory from './SpellHistory';
 
 const API_URL = process.env.REACT_APP_API_URL 
   ? `https://${process.env.REACT_APP_API_URL}`
@@ -35,6 +36,7 @@ const GameInterface = () => {
   const [storyData, setStoryData] = useState({ world: null, stage: null, storyType: 'world' });
   const [currentBossPhase, setCurrentBossPhase] = useState(1);
   const [bossPhaseHealth, setBossPhaseHealth] = useState(100);
+  const [isReplaying, setIsReplaying] = useState(false);
 
   // Load game progress from localStorage on component mount
   useEffect(() => {
@@ -120,8 +122,12 @@ const GameInterface = () => {
     }
   };
 
-  const selectCreature = (creatureId) => {
+  const selectCreature = (creatureId, replay = false) => {
     const creature = creatures[creatureId];
+    
+    // Determine if this is a replay (creature already defeated)
+    const isReplay = replay || defeatedCreatures.includes(creatureId);
+    setIsReplaying(isReplay);
     
     // Handle boss mechanics
     if (creature.isBoss) {
@@ -227,15 +233,29 @@ const GameInterface = () => {
       setSpellEffect(effectEmoji);
       setTimeout(() => setSpellEffect(''), 1000);
 
-      // Add to spell history
-      const spellRecord = {
-        spell: spellText,
-        creature: currentCreature.name,
-        damage: result.evaluation.damage,
-        effectiveness: result.evaluation.effectiveness,
-        timestamp: new Date().toLocaleTimeString()
-      };
-      setSpellHistory(prev => [spellRecord, ...prev].slice(0, 10)); // Keep last 10 spells
+      // Add to spell history (only if not moderated)
+      if (!result.moderated) {
+        const spellRecord = {
+          spell: spellText,
+          creature: currentCreature.name,
+          damage: result.evaluation.damage,
+          healing: result.evaluation.healing || 0,
+          effectiveness: result.evaluation.effectiveness,
+          timestamp: new Date().toLocaleTimeString()
+        };
+        setSpellHistory(prev => [spellRecord, ...prev].slice(0, 10)); // Keep last 10 spells
+      }
+
+      // Handle healing first
+      const healing = result.evaluation.healing || 0;
+      if (healing > 0) {
+        const newPlayerHealth = Math.min(maxPlayerHealth, playerHealth + healing);
+        setPlayerHealth(newPlayerHealth);
+        
+        // Show healing effect
+        setSpellEffect('💚');
+        setTimeout(() => setSpellEffect(''), 1500);
+      }
 
       // Calculate damage and handle boss phases
       const damage = result.evaluation.damage;
@@ -309,58 +329,71 @@ const GameInterface = () => {
 
       // Check win condition FIRST - if creature is defeated, it can't attack back
       if (newHealth <= 0) {
-        // Calculate score based on effectiveness and creature difficulty
-        const baseScore = currentCreature.maxHealth;
-        const effectivenessBonus = result.evaluation.effectiveness * 10;
-        const earnedScore = baseScore + effectivenessBonus;
+        let earnedScore = 0;
         
-        setScore(prev => prev + earnedScore);
+        // Only give points if this is not a replay
+        if (!isReplaying) {
+          // Calculate score based on effectiveness and creature difficulty
+          const baseScore = currentCreature.maxHealth;
+          const effectivenessBonus = result.evaluation.effectiveness * 10;
+          earnedScore = baseScore + effectivenessBonus;
+          
+          setScore(prev => prev + earnedScore);
+          // Only add to defeated creatures if not already defeated
+          if (!defeatedCreatures.includes(currentCreature.id)) {
+            setDefeatedCreatures(prev => [...prev, currentCreature.id]);
+          }
+        }
+        
         setLastEarnedScore(earnedScore);
-        setDefeatedCreatures(prev => [...prev, currentCreature.id]);
         setGameState('victory');
         setTimeout(() => setShowVictoryModal(true), 1200);
       } else {
-        // Creature is still alive - it can counter-attack
-        let playerDamage;
-        if (currentCreature.isBoss) {
-          // Boss damage depends on effectiveness - reward good attempts
-          if (effectiveness >= 7) {
-            playerDamage = Math.ceil(maxPlayerHealth / 8); // 12.5% damage for good attempts
-          } else if (effectiveness >= 4) {
-            playerDamage = Math.ceil(maxPlayerHealth / 5); // 20% damage for decent attempts
-          } else {
-            playerDamage = Math.ceil(maxPlayerHealth / 4); // 25% damage for poor attempts
-          }
-        } else {
-          // Regular creatures do 1/3 damage
-          playerDamage = Math.ceil(maxPlayerHealth / 3);
-        }
-        const newPlayerHealth = Math.max(0, playerHealth - playerDamage);
+        // Creature is still alive - it can counter-attack (unless it was just a healing spell with no damage)
+        const shouldCounterAttack = damage > 0 || healing === 0; // Counter-attack if damage was dealt OR if it wasn't a healing spell
         
-        // Animate creature attack and player taking damage
-        setTimeout(() => {
-          setBattleAnimation('creature-attack');
-          setPlayerTakingDamage(true);
-          // Update health after attack animation starts
+        if (shouldCounterAttack) {
+          let playerDamage;
+          if (currentCreature.isBoss) {
+            // Boss damage depends on effectiveness - reward good attempts
+            if (effectiveness >= 7) {
+              playerDamage = Math.ceil(maxPlayerHealth / 8); // 12.5% damage for good attempts
+            } else if (effectiveness >= 4) {
+              playerDamage = Math.ceil(maxPlayerHealth / 5); // 20% damage for decent attempts
+            } else {
+              playerDamage = Math.ceil(maxPlayerHealth / 4); // 25% damage for poor attempts
+            }
+          } else {
+            // Regular creatures do 1/3 damage
+            playerDamage = Math.ceil(maxPlayerHealth / 3);
+          }
+          const newPlayerHealth = Math.max(0, playerHealth - playerDamage);
+          
+          // Animate creature attack and player taking damage
           setTimeout(() => {
-            setPlayerHealth(newPlayerHealth);
-          }, 400); // Update health mid-attack
-          setTimeout(() => {
-            setBattleAnimation('creature-idle');
-            setPlayerTakingDamage(false);
-          }, 800);
-        }, 1000);
+            setBattleAnimation('creature-attack');
+            setPlayerTakingDamage(true);
+            // Update health after attack animation starts
+            setTimeout(() => {
+              setPlayerHealth(newPlayerHealth);
+            }, 400); // Update health mid-attack
+            setTimeout(() => {
+              setBattleAnimation('creature-idle');
+              setPlayerTakingDamage(false);
+            }, 800);
+          }, 1000);
 
-        // Check if player is defeated AFTER creature attacks
-        if (newPlayerHealth <= 0) {
-          // Player is defeated - show modal after health animation completes
-          setGameState('defeat');
-          setTimeout(() => {
-            setShowDefeatModal(true);
-          }, 2000); // Wait for health bar animation to complete
-        } else if (damage === 0 && result.evaluation.effectiveness <= 3) {
-          // If spell was very ineffective, just continue battle
-          setGameState('ready');
+          // Check if player is defeated AFTER creature attacks
+          if (newPlayerHealth <= 0) {
+            // Player is defeated - show modal after health animation completes
+            setGameState('defeat');
+            setTimeout(() => {
+              setShowDefeatModal(true);
+            }, 2000); // Wait for health bar animation to complete
+          } else if (damage === 0 && result.evaluation.effectiveness <= 3) {
+            // If spell was very ineffective, just continue battle
+            setGameState('ready');
+          }
         }
       }
 
@@ -501,6 +534,11 @@ const GameInterface = () => {
           </div>
         </div>
 
+        {/* Fixed Spell History on the left side */}
+        <div className="spell-history-fixed">
+          <SpellHistory spellHistory={spellHistory} />
+        </div>
+
         {/* Main content row */}
         <div className="main-content">
           {/* Creature in center */}
@@ -574,6 +612,7 @@ const GameInterface = () => {
           creatureName={currentCreature?.name}
           onBackToSelection={backToWorldMap}
           earnedScore={lastEarnedScore}
+          isReplaying={isReplaying}
         />
 
         {/* Defeat Modal */}

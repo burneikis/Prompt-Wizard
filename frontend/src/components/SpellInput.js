@@ -13,6 +13,17 @@ const SpellInput = ({ onSpellCast, isLoading, disabled }) => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (spellText.trim() && !isLoading && !disabled) {
+        onSpellCast(spellText.trim());
+        setSpellText('');
+        setCharCount(0);
+      }
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (spellText.trim() && !isLoading && !disabled) {
@@ -30,7 +41,8 @@ const SpellInput = ({ onSpellCast, isLoading, disabled }) => {
           <textarea
             value={spellText}
             onChange={handleInputChange}
-            placeholder="Describe your magical attack in detail... (e.g., 'I summon a powerful ice storm to freeze the dragon's flames')"
+            onKeyDown={handleKeyDown}
+            placeholder="Describe your magical attack in detail... Press Enter to cast spell, Shift+Enter for new line"
             rows={4}
             disabled={isLoading || disabled}
             className="spell-textarea"

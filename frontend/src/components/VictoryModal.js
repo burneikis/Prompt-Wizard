@@ -1,5 +1,7 @@
 
-const VictoryModal = ({ isOpen, onClose, onReset, creatureName, onBackToSelection, earnedScore }) => {
+import React from 'react';
+
+const VictoryModal = ({ isOpen, onClose, onReset, creatureName, onBackToSelection, earnedScore, isReplaying }) => {
   if (!isOpen) return null;
 
   return (
@@ -11,8 +13,17 @@ const VictoryModal = ({ isOpen, onClose, onReset, creatureName, onBackToSelectio
           </div>
           <div className="victory-body">
             <p>You have defeated the {creatureName}!</p>
-            <p>Your magical prowess has proven victorious in battle!</p>
-            {earnedScore && <p><strong>You earned {earnedScore} points!</strong></p>}
+            {isReplaying ? (
+              <>
+                <p>You've mastered this challenge again!</p>
+                <p><em>No points earned for replay battles</em></p>
+              </>
+            ) : (
+              <>
+                <p>Your magical prowess has proven victorious in battle!</p>
+                {earnedScore > 0 && <p><strong>You earned {earnedScore} points!</strong></p>}
+              </>
+            )}
           </div>
           <div className="victory-actions">
             <button onClick={onReset} className="reset-button">
