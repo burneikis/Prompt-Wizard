@@ -56,9 +56,9 @@
 - [ ] local storage saving (isnt working rn)
 
 ### 4.2 Basic Testing
-- [ ] Test with a few users
-- [ ] Fix major bugs
-- [ ] Ensure game is playable end-to-end
+- [x] Test with a few users
+- [x] Fix major bugs (hopefully)
+- [x] Ensure game is playable end-to-end
 
 ## Phase 5: Competition Deliverables
 
