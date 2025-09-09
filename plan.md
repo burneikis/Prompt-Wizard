@@ -1,4 +1,4 @@
-# Prompt Wizard - Devlopment Plan
+# Prompt Wizard - Development Plan
 
 ## Phase 1: Setup & Basic Prototype
 
@@ -64,8 +64,8 @@
 
 ### 5.1 Documentation
 - [ ] Create 3-minute demo video
-- [ ] Write technical writeup PDF
-- [ ] Clean up code repository
+- [x] Write technical writeup PDF
+- [x] Clean up code repository
 - [ ] Submit all materials
 
 ## Future Enhancements (Post-Competition)
